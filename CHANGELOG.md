@@ -1,3 +1,7 @@
+## 0.1.2 (unreleased)
+
+- Fixed input order
+
 ## 0.1.1 (2020-08-10)
 
 - Fixed installation error when cereal not installed

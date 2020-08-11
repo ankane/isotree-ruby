@@ -2,24 +2,21 @@ require_relative "test_helper"
 
 class IsoTreeTest < Minitest::Test
   def test_works
-    Numo::NArray.srand(12)
-    x = Numo::DFloat.new(101, 2).rand_norm
-    x[100, true] = 3
-    x = x.to_a
+    x = test_data
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
     model.fit(x)
     predictions = model.predict(x)
+    assert_in_delta 0.510724008530721, predictions.first
     max_index = predictions.each_with_index.max[1]
     assert_equal [3, 3], x[max_index]
   end
 
   def test_numo
-    Numo::NArray.srand(12)
-    x = Numo::DFloat.new(101, 2).rand_norm
-    x[100, true] = 3
+    x = Numo::DFloat.cast(test_data)
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
     model.fit(x)
     predictions = model.predict(x)
+    assert_in_delta 0.510724008530721, predictions.first
     max_index = predictions.each_with_index.max[1]
     assert_equal [3, 3], x[max_index, true].to_a
   end
@@ -64,5 +61,9 @@ class IsoTreeTest < Minitest::Test
       model.fit(Numo::DFloat.cast([[[1]]]))
     end
     assert_equal "Input must have 2 dimensions", error.message
+  end
+
+  def test_data
+    CSV.table("test/support/data.csv", headers: false).to_a
   end
 end

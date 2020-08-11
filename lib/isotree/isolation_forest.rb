@@ -54,8 +54,11 @@ module IsoTree
       if defined?(Numo::NArray) && x.is_a?(Numo::NArray)
         raise ArgumentError, "Input must have 2 dimensions" if x.ndim != 2
         x = x.cast_to(Numo::DFloat)
-        numeric_data = x.to_binary
         nrows, ncols = x.shape
+        numeric_data = String.new
+        ncols.times do |i|
+          numeric_data << x[true, i].to_binary
+        end
       else
         x = x.to_a
         nrows = x.size
@@ -63,7 +66,10 @@ module IsoTree
         if x.any? { |r| r.size != ncols }
           raise ArgumentError, "All rows must have the same number of columns"
         end
-        numeric_data = x.flatten(1).pack("d*")
+        numeric_data = String.new
+        ncols.times do |i|
+          numeric_data << x.map { |v| v[i] }.pack("d*")
+        end
       end
       raise ArgumentError, "No data" if nrows == 0
 
