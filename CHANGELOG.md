@@ -1,6 +1,6 @@
 ## 0.1.2 (unreleased)
 
-- Fixed input order
+- Fixed outlier scores
 
 ## 0.1.1 (2020-08-10)
 
