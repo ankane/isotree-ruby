@@ -1,6 +1,6 @@
 # IsoTree
 
-:evergreen_tree: [IsoTree](https://github.com/david-cortes/isotree) - outlier/anomaly detection for using Isolation Forest - for Ruby
+:evergreen_tree: [IsoTree](https://github.com/david-cortes/isotree) - outlier/anomaly detection using Isolation Forest - for Ruby
 
 Learn how [Isolation Forest](https://www.youtube.com/watch?v=RyFQXQf4w4w) works
 
