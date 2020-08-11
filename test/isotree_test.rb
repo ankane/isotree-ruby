@@ -6,7 +6,14 @@ class IsoTreeTest < Minitest::Test
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
     model.fit(x)
     predictions = model.predict(x)
-    assert_elements_in_delta [0.510724008530721, 0.4338067195010562, 0.5569583231648105], predictions.first(3)
+    # different results on different platforms with same seed
+    expected =
+      if mac?
+        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
+      else
+        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
+      end
+    assert_elements_in_delta expected, predictions.first(3)
     max_index = predictions.each_with_index.max[1]
     assert_equal [3, 3], x[max_index]
   end
@@ -16,7 +23,14 @@ class IsoTreeTest < Minitest::Test
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
     model.fit(x)
     predictions = model.predict(x)
-    assert_elements_in_delta [0.510724008530721, 0.4338067195010562, 0.5569583231648105], predictions.first(3)
+    # different results on different platforms with same seed
+    expected =
+      if mac?
+        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
+      else
+        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
+      end
+    assert_elements_in_delta expected, predictions.first(3)
     max_index = predictions.each_with_index.max[1]
     assert_equal [3, 3], x[max_index, true].to_a
   end
@@ -65,5 +79,9 @@ class IsoTreeTest < Minitest::Test
 
   def test_data
     CSV.table("test/support/data.csv", headers: false).to_a
+  end
+
+  def mac?
+    RbConfig::CONFIG["host_os"] =~ /darwin/i
   end
 end
