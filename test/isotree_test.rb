@@ -6,7 +6,7 @@ class IsoTreeTest < Minitest::Test
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
     model.fit(x)
     predictions = model.predict(x)
-    assert_in_delta 0.510724008530721, predictions.first
+    assert_elements_in_delta [0.510724008530721, 0.4338067195010562, 0.5569583231648105], predictions.first(3)
     max_index = predictions.each_with_index.max[1]
     assert_equal [3, 3], x[max_index]
   end
@@ -16,7 +16,7 @@ class IsoTreeTest < Minitest::Test
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
     model.fit(x)
     predictions = model.predict(x)
-    assert_in_delta 0.510724008530721, predictions.first
+    assert_elements_in_delta [0.510724008530721, 0.4338067195010562, 0.5569583231648105], predictions.first(3)
     max_index = predictions.each_with_index.max[1]
     assert_equal [3, 3], x[max_index, true].to_a
   end
