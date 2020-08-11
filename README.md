@@ -89,6 +89,11 @@ brew install libomp
 
 Then reinstall the gem.
 
+```sh
+gem uninstall isotree --force
+bundle install
+```
+
 ## History
 
 View the [changelog](https://github.com/ankane/isotree/blob/master/CHANGELOG.md)
