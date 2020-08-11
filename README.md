@@ -4,6 +4,8 @@
 
 Learn how [Isolation Forest](https://www.youtube.com/watch?v=RyFQXQf4w4w) works
 
+[![Build Status](https://travis-ci.org/ankane/isotree.svg?branch=master)](https://travis-ci.org/ankane/isotree)
+
 ## Installation
 
 Add this line to your application’s Gemfile:
