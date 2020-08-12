@@ -94,6 +94,10 @@ gem uninstall isotree --force
 bundle install
 ```
 
+## Related Projects
+
+Check out [OutlierTree](https://github.com/ankane/outliertree) to get a human-readable explanation for outliers.
+
 ## History
 
 View the [changelog](https://github.com/ankane/isotree/blob/master/CHANGELOG.md)
