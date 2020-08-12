@@ -34,14 +34,14 @@ module IsoTree
     def fit(x)
       options = data_options(x).merge(fit_options)
       options[:sample_size] ||= options[:nrows]
-      @ncols = options[:ncols]
+      @ncols = options[:ncols_numeric]
       @ext_iso_forest = Ext.fit_iforest(options)
     end
 
     def predict(x)
       raise "Not fit" unless @ext_iso_forest
       options = data_options(x).merge(nthreads: @nthreads)
-      if options[:ncols] != @ncols
+      if options[:ncols_numeric] != @ncols
         raise ArgumentError, "Input must have #{@ncols} columns for this model"
       end
       Ext.predict_iforest(@ext_iso_forest, options)
@@ -75,8 +75,10 @@ module IsoTree
 
       {
         nrows: nrows,
-        ncols: ncols,
-        numeric_data: numeric_data
+        ncols_numeric: ncols,
+        numeric_data: numeric_data,
+        ncols_categ: 0,
+        categ_data: nil
       }
     end
 

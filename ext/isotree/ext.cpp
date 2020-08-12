@@ -33,12 +33,21 @@ void Init_ext()
 
         // data
         size_t nrows = options.get<size_t, Symbol>("nrows");
-        size_t ncols = options.get<size_t, Symbol>("ncols");
-        double* numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
-        size_t ncols_numeric = ncols;
-        int* categ_data = NULL;
-        size_t ncols_categ = 0;
-        int* ncat = NULL;
+        size_t ncols_numeric = options.get<size_t, Symbol>("ncols_numeric");
+        size_t ncols_categ = options.get<size_t, Symbol>("ncols_categ");
+
+        double *restrict numeric_data = NULL;
+        if (ncols_numeric > 0) {
+          numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
+        }
+
+        int *restrict categ_data = NULL;
+        int *restrict ncat = NULL;
+        if (ncols_categ > 0) {
+          categ_data = (int*) options.get<String, Symbol>("categ_data").c_str();
+          ncat = (int*) options.get<String, Symbol>("ncat").c_str();
+        }
+
         double* Xc = NULL;
         sparse_ix* Xc_ind = NULL;
         sparse_ix* Xc_indptr = NULL;
