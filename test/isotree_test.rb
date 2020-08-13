@@ -1,7 +1,7 @@
 require_relative "test_helper"
 
 class IsoTreeTest < Minitest::Test
-  def test_works
+  def test_array
     x = test_data
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
     model.fit(x)
@@ -14,8 +14,7 @@ class IsoTreeTest < Minitest::Test
         [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
       end
     assert_elements_in_delta expected, predictions.first(3)
-    max_index = predictions.each_with_index.max[1]
-    assert_equal [3, 3], x[max_index]
+    assert_equal 100, predictions.each_with_index.max[1]
   end
 
   def test_numo
@@ -31,8 +30,41 @@ class IsoTreeTest < Minitest::Test
         [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
       end
     assert_elements_in_delta expected, predictions.first(3)
-    max_index = predictions.each_with_index.max[1]
-    assert_equal [3, 3], x[max_index, true].to_a
+    assert_equal 100, predictions.each_with_index.max[1]
+  end
+
+  def test_hashes
+    x = test_data.map { |v| {x0: v[0], x1: v[1]} }
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
+    model.fit(x)
+    predictions = model.predict(x)
+    # different results on different platforms with same seed
+    expected =
+      if mac?
+        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
+      else
+        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
+      end
+    assert_elements_in_delta expected, predictions.first(3)
+    assert_equal 100, predictions.each_with_index.max[1]
+  end
+
+  def test_rover
+    require "rover"
+
+    x = Rover::DataFrame.new(test_data.map { |v| {x0: v[0], x1: v[1]} })
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
+    model.fit(x)
+    predictions = model.predict(x)
+    # different results on different platforms with same seed
+    expected =
+      if mac?
+        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
+      else
+        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
+      end
+    assert_elements_in_delta expected, predictions.first(3)
+    assert_equal 100, predictions.each_with_index.max[1]
   end
 
   def test_not_fit

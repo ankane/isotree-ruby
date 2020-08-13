@@ -67,10 +67,22 @@ See a [detailed explanation](https://isotree.readthedocs.io/en/latest/#isotree.I
 
 ## Data
 
-Data can be an array of arrays
+Data can be an array of hashes [master]
+
+```ruby
+[{x0: 1, x1: 2, x2: 3}, {x0: 4, x1: 5, x2: 6}]
+```
+
+Or an array of arrays
 
 ```ruby
 [[1, 2, 3], [4, 5, 6]]
+```
+
+Or a Rover data frame [master]
+
+```ruby
+Rover.read_csv("data.csv")
 ```
 
 Or a Numo array

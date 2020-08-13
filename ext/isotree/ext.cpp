@@ -41,10 +41,10 @@ void Init_ext()
           numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
         }
 
-        int *restrict categ_data = NULL;
+        int *restrict categorical_data = NULL;
         int *restrict ncat = NULL;
         if (ncols_categ > 0) {
-          categ_data = (int*) options.get<String, Symbol>("categ_data").c_str();
+          categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
           ncat = (int*) options.get<String, Symbol>("ncat").c_str();
         }
 
@@ -96,7 +96,7 @@ void Init_ext()
           &iso,
           numeric_data,
           ncols_numeric,
-          categ_data,
+          categorical_data,
           ncols_categ,
           ncat,
           Xc,
@@ -154,10 +154,10 @@ void Init_ext()
           numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
         }
 
-        int *restrict categ_data = NULL;
+        int *restrict categorical_data = NULL;
         int *restrict ncat = NULL;
         if (ncols_categ > 0) {
-          categ_data = (int*) options.get<String, Symbol>("categ_data").c_str();
+          categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
           ncat = (int*) options.get<String, Symbol>("ncat").c_str();
         }
 
@@ -177,7 +177,7 @@ void Init_ext()
 
         predict_iforest(
           numeric_data,
-          categ_data,
+          categorical_data,
           Xc,
           Xc_ind,
           Xc_indptr,
