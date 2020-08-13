@@ -1,11 +1,27 @@
 require_relative "test_helper"
 
 class IsoTreeTest < Minitest::Test
+  def test_hashes
+    data = test_data
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
+    model.fit(data)
+    predictions = model.predict(data)
+    # different results on different platforms with same seed
+    expected =
+      if mac?
+        [0.4617110810516882, 0.5210998270463041, 0.5661097222304904]
+      else
+        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
+      end
+    assert_elements_in_delta expected, predictions.first(3)
+    assert_equal 100, predictions.each_with_index.max[1]
+  end
+
   def test_array
-    x = test_data
-    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
-    model.fit(x)
-    predictions = model.predict(x)
+    data = numeric_data
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
+    model.fit(data)
+    predictions = model.predict(data)
     # different results on different platforms with same seed
     expected =
       if mac?
@@ -18,26 +34,10 @@ class IsoTreeTest < Minitest::Test
   end
 
   def test_numo
-    x = Numo::DFloat.cast(test_data)
-    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
-    model.fit(x)
-    predictions = model.predict(x)
-    # different results on different platforms with same seed
-    expected =
-      if mac?
-        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
-      else
-        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
-      end
-    assert_elements_in_delta expected, predictions.first(3)
-    assert_equal 100, predictions.each_with_index.max[1]
-  end
-
-  def test_hashes
-    x = test_data.map { |v| {x0: v[0], x1: v[1]} }
-    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
-    model.fit(x)
-    predictions = model.predict(x)
+    data = Numo::DFloat.cast(numeric_data)
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
+    model.fit(data)
+    predictions = model.predict(data)
     # different results on different platforms with same seed
     expected =
       if mac?
@@ -52,14 +52,14 @@ class IsoTreeTest < Minitest::Test
   def test_rover
     require "rover"
 
-    x = Rover::DataFrame.new(test_data.map { |v| {x0: v[0], x1: v[1]} })
-    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
-    model.fit(x)
-    predictions = model.predict(x)
+    data = Rover::DataFrame.new(test_data)
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
+    model.fit(data)
+    predictions = model.predict(data)
     # different results on different platforms with same seed
     expected =
       if mac?
-        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
+        [0.4617110810516882, 0.5210998270463041, 0.5661097222304904]
       else
         [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
       end
@@ -68,16 +68,14 @@ class IsoTreeTest < Minitest::Test
   end
 
   def test_predict_output_avg_depth
-    skip unless mac? # for now
-
-    x = test_data
-    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
-    model.fit(x)
-    predictions = model.predict(x, output: "avg_depth")
+    data = test_data
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
+    model.fit(data)
+    predictions = model.predict(data, output: "avg_depth")
     # different results on different platforms with same seed
     expected =
       if mac?
-        [8.137551061527773, 10.11439771745749, 7.088017410096077]
+        [9.359408405715701, 7.893975468975469, 6.890641859762501]
       else
         [] # todo
       end
@@ -128,7 +126,11 @@ class IsoTreeTest < Minitest::Test
   end
 
   def test_data
-    CSV.table("test/support/data.csv", headers: false).to_a
+    CSV.table("test/support/data.csv").map(&:to_h)
+  end
+
+  def numeric_data
+    test_data.map { |v| [v[:num1], v[:num2]] }
   end
 
   def mac?

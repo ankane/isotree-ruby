@@ -21,20 +21,24 @@ gem 'isotree'
 Prep your data
 
 ```ruby
-x = [[1, 2], [3, 4], [5, 6], [7, 8]]
+data = [
+  {department: "Books",  sale: false, price: 2.50},
+  {department: "Books",  sale: true,  price: 3.00},
+  {department: "Movies", sale: false, price: 5.00}
+]
 ```
 
 Train a model
 
 ```ruby
 model = IsoTree::IsolationForest.new
-model.fit(x)
+model.fit(data)
 ```
 
 Get outlier scores
 
 ```ruby
-model.predict(x)
+model.predict(data)
 ```
 
 Scores are between 0 and 1, with higher scores indicating outliers
@@ -72,13 +76,11 @@ See a [detailed explanation](https://isotree.readthedocs.io/en/latest/#isotree.I
 Data can be an array of hashes [master]
 
 ```ruby
-[{x0: 1, x1: 2, x2: 3}, {x0: 4, x1: 5, x2: 6}]
-```
-
-Or an array of arrays
-
-```ruby
-[[1, 2, 3], [4, 5, 6]]
+[
+  {department: "Books",  sale: false, price: 2.50},
+  {department: "Books",  sale: true,  price: 3.00},
+  {department: "Movies", sale: false, price: 5.00}
+]
 ```
 
 Or a Rover data frame [master]
@@ -110,7 +112,7 @@ bundle install
 
 ## Reference
 
-Get the average isolation depth with: [master]
+Get the average isolation depth [master]
 
 ```ruby
 model.predict(data, output: "avg_depth")

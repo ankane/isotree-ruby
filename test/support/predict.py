@@ -1,9 +1,14 @@
 import numpy as np
+import pandas as pd
 from isotree import IsolationForest
 
-X = np.loadtxt('test/support/data.csv', delimiter=',')
-model = IsolationForest(ntrees=10, ndim=2, nthreads=1)
-model.fit(X)
-predictions = model.predict(X)
+df = pd.read_csv('test/support/data.csv')
+model = IsolationForest(ntrees=10, ndim=3, nthreads=1)
+model.fit(df)
+
+predictions = model.predict(df)
 print(predictions[0:3].tolist())
-print("Point with highest outlier score: ", X[np.argsort(-predictions)[0], ])
+print('Point with highest outlier score: ', df.iloc[np.argsort(-predictions)[0]])
+
+print('avg_depth')
+print(model.predict(df, output='avg_depth')[0:3].tolist())
