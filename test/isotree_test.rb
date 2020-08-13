@@ -11,7 +11,7 @@ class IsoTreeTest < Minitest::Test
       if mac?
         [0.4617110810516882, 0.5210998270463041, 0.5661097222304904]
       else
-        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
+        [0.4927188206980871, 0.4801482894096561, 0.5887046016628537]
       end
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.max[1]
@@ -61,7 +61,7 @@ class IsoTreeTest < Minitest::Test
       if mac?
         [0.4617110810516882, 0.5210998270463041, 0.5661097222304904]
       else
-        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
+        [0.4927188206980871, 0.4801482894096561, 0.5887046016628537]
       end
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.max[1]
@@ -77,7 +77,7 @@ class IsoTreeTest < Minitest::Test
       if mac?
         [9.359408405715701, 7.893975468975469, 6.890641859762501]
       else
-        [] # todo
+        [8.572215345713797, 8.885202562920695, 6.416666666666666]
       end
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.min[1]
