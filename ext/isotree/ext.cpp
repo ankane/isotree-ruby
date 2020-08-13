@@ -155,10 +155,8 @@ void Init_ext()
         }
 
         int *restrict categorical_data = NULL;
-        int *restrict ncat = NULL;
         if (ncols_categ > 0) {
           categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
-          ncat = (int*) options.get<String, Symbol>("ncat").c_str();
         }
 
         // not used (sparse matrices)
