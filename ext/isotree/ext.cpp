@@ -171,7 +171,7 @@ void Init_ext()
 
         // options
         int nthreads = options.get<int, Symbol>("nthreads");
-        bool standardize = true;
+        bool standardize = options.get<bool, Symbol>("standardize");
         std::vector<double> outlier_scores(nrows);
         sparse_ix* tree_num = NULL;
 

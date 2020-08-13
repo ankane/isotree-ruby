@@ -110,6 +110,14 @@ bundle install
 
 Check out [OutlierTree](https://github.com/ankane/outliertree) to get a human-readable explanation for outliers.
 
+## Reference
+
+Get the average isolation depth with: [master]
+
+```ruby
+model.predict(data, output: "avg_depth")
+```
+
 ## History
 
 View the [changelog](https://github.com/ankane/isotree/blob/master/CHANGELOG.md)

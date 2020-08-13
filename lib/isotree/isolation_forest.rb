@@ -39,12 +39,22 @@ module IsoTree
       @ext_iso_forest = Ext.fit_iforest(options)
     end
 
-    def predict(x)
+    def predict(x, output: "score")
       raise "Not fit" unless @ext_iso_forest
 
       x = Dataset.new(x)
       prep_predict(x)
+
       options = data_options(x).merge(nthreads: @nthreads)
+      case output
+      when "score"
+        options[:standardize] = true
+      when "avg_depth"
+        options[:standardize] = false
+      else
+        raise ArgumentError, "Unknown output"
+      end
+
       Ext.predict_iforest(@ext_iso_forest, options)
     end
 

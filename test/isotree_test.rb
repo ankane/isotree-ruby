@@ -67,6 +67,24 @@ class IsoTreeTest < Minitest::Test
     assert_equal 100, predictions.each_with_index.max[1]
   end
 
+  def test_predict_output_avg_depth
+    skip unless mac? # for now
+
+    x = test_data
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 2, nthreads: 1)
+    model.fit(x)
+    predictions = model.predict(x, output: "avg_depth")
+    # different results on different platforms with same seed
+    expected =
+      if mac?
+        [8.137551061527773, 10.11439771745749, 7.088017410096077]
+      else
+        [] # todo
+      end
+    assert_elements_in_delta expected, predictions.first(3)
+    assert_equal 100, predictions.each_with_index.min[1]
+  end
+
   def test_not_fit
     model = IsoTree::IsolationForest.new
     error = assert_raises do
