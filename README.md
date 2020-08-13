@@ -4,6 +4,8 @@
 
 Learn how [Isolation Forest](https://www.youtube.com/watch?v=RyFQXQf4w4w) works
 
+:deciduous_tree: Check out [OutlierTree](https://github.com/ankane/outliertree) for human-readable explanations of outliers
+
 [![Build Status](https://travis-ci.org/ankane/isotree.svg?branch=master)](https://travis-ci.org/ankane/isotree)
 
 ## Installation
@@ -105,10 +107,6 @@ Then reinstall the gem.
 gem uninstall isotree --force
 bundle install
 ```
-
-## Related Projects
-
-Check out [OutlierTree](https://github.com/ankane/outliertree) to get a human-readable explanation for outliers.
 
 ## Reference
 
