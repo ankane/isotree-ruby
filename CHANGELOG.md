@@ -1,7 +1,7 @@
-## 0.1.3 (unreleased)
+## 0.1.3 (2020-08-13)
 
 - Added support for categorical data
-- Added support for arrays of hashes and Rover data frames
+- Added support for Rover data frames
 - Added `output` option to `predict` method
 
 ## 0.1.2 (2020-08-11)

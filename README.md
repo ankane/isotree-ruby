@@ -73,7 +73,7 @@ See a [detailed explanation](https://isotree.readthedocs.io/en/latest/#isotree.I
 
 ## Data
 
-Data can be an array of hashes [master]
+Data can be an array of hashes
 
 ```ruby
 [
@@ -83,7 +83,7 @@ Data can be an array of hashes [master]
 ]
 ```
 
-Or a Rover data frame [master]
+Or a Rover data frame
 
 ```ruby
 Rover.read_csv("data.csv")
@@ -112,7 +112,7 @@ bundle install
 
 ## Reference
 
-Get the average isolation depth [master]
+Get the average isolation depth
 
 ```ruby
 model.predict(data, output: "avg_depth")
