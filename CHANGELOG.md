@@ -1,3 +1,7 @@
+## 0.1.4 (unreleased)
+
+- Added `missing_action`, `new_categ_action`, `categ_split_type`, `depth_imp`, and `weigh_imp_rows` options
+
 ## 0.1.3 (2020-08-13)
 
 - Added support for categorical data

@@ -58,12 +58,17 @@ IsoTree::IsolationForest.new(
   prob_split_avg_gain: 0,
   prob_split_pooled_gain: 0,
   min_gain: 0,
+  missing_action: "impute",
+  new_categ_action: "smallest",
+  categ_split_type: "subset",
   all_perm: false,
   coef_by_prop: false,
   sample_with_replacement: false,
   penalize_range: true,
   weigh_by_kurtosis: false,
   min_imp_obs: 3,
+  depth_imp: "higher",
+  weigh_imp_rows: "inverse",
   random_seed: 1,
   nthreads: -1
 )

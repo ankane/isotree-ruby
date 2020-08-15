@@ -4,9 +4,11 @@ module IsoTree
       sample_size: nil, ntrees: 500, ndim: 3, ntry: 3,
       prob_pick_avg_gain: 0, prob_pick_pooled_gain: 0,
       prob_split_avg_gain: 0, prob_split_pooled_gain: 0,
-      min_gain: 0, all_perm: false, coef_by_prop: false,
+      min_gain: 0, missing_action: "impute", new_categ_action: "smallest",
+      categ_split_type: "subset", all_perm: false, coef_by_prop: false,
       sample_with_replacement: false, penalize_range: true,
-      weigh_by_kurtosis: false, min_imp_obs: 3, random_seed: 1, nthreads: -1
+      weigh_by_kurtosis: false, min_imp_obs: 3, depth_imp: "higher",
+      weigh_imp_rows: "inverse", random_seed: 1, nthreads: -1
     )
 
       @sample_size = sample_size
@@ -18,12 +20,17 @@ module IsoTree
       @prob_split_avg_gain = prob_split_avg_gain
       @prob_split_pooled_gain = prob_split_pooled_gain
       @min_gain = min_gain
+      @missing_action = missing_action
+      @new_categ_action = new_categ_action
+      @categ_split_type = categ_split_type
       @all_perm = all_perm
       @coef_by_prop = coef_by_prop
       @sample_with_replacement = sample_with_replacement
       @penalize_range = penalize_range
       @weigh_by_kurtosis = weigh_by_kurtosis
       @min_imp_obs = min_imp_obs
+      @depth_imp = depth_imp
+      @weigh_imp_rows = weigh_imp_rows
       @random_seed = random_seed
 
       # etc module returns virtual cores
@@ -138,10 +145,11 @@ module IsoTree
         sample_size ntrees ndim ntry
         prob_pick_avg_gain prob_pick_pooled_gain
         prob_split_avg_gain prob_split_pooled_gain
-        min_gain all_perm coef_by_prop
+        min_gain missing_action new_categ_action
+        categ_split_type all_perm coef_by_prop
         sample_with_replacement penalize_range
-        weigh_by_kurtosis min_imp_obs
-        random_seed nthreads
+        weigh_by_kurtosis min_imp_obs depth_imp
+        weigh_imp_rows random_seed nthreads
       )
       options = {}
       keys.each do |k|

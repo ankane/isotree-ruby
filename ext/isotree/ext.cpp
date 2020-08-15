@@ -5,16 +5,67 @@
 #include <rice/Array.hpp>
 #include <rice/Hash.hpp>
 #include <rice/Module.hpp>
+#include <rice/Object.hpp>
 #include <rice/String.hpp>
 #include <rice/Symbol.hpp>
 
 using Rice::Array;
 using Rice::Hash;
 using Rice::Module;
+using Rice::Object;
 using Rice::String;
 using Rice::Symbol;
 using Rice::define_class_under;
 using Rice::define_module;
+
+template<>
+NewCategAction from_ruby<NewCategAction>(Object x)
+{
+  auto value = x.to_s().str();
+  if (value == "weighted") return Weighted;
+  if (value == "smallest") return Smallest;
+  if (value == "random") return Random;
+  throw std::runtime_error("Unknown new categ action: " + value);
+}
+
+template<>
+MissingAction from_ruby<MissingAction>(Object x)
+{
+  auto value = x.to_s().str();
+  if (value == "divide") return Divide;
+  if (value == "impute") return Impute;
+  if (value == "fail") return Fail;
+  throw std::runtime_error("Unknown missing action: " + value);
+}
+
+template<>
+CategSplit from_ruby<CategSplit>(Object x)
+{
+  auto value = x.to_s().str();
+  if (value == "subset") return SubSet;
+  if (value == "single_categ") return SingleCateg;
+  throw std::runtime_error("Unknown categ split: " + value);
+}
+
+template<>
+UseDepthImp from_ruby<UseDepthImp>(Object x)
+{
+  auto value = x.to_s().str();
+  if (value == "lower") return Lower;
+  if (value == "higher") return Higher;
+  if (value == "same") return Same;
+  throw std::runtime_error("Unknown depth imp: " + value);
+}
+
+template<>
+WeighImpRows from_ruby<WeighImpRows>(Object x)
+{
+  auto value = x.to_s().str();
+  if (value == "inverse") return Inverse;
+  if (value == "prop") return Prop;
+  if (value == "flat") return Flat;
+  throw std::runtime_error("Unknown weight imp rows: " + value);
+}
 
 extern "C"
 void Init_ext()
@@ -64,12 +115,12 @@ void Init_ext()
         double* output_depths = NULL;
         bool standardize_depth = false;
         double* col_weights = NULL;
-        MissingAction missing_action = Impute;
-        CategSplit cat_split_type = SubSet;
-        NewCategAction new_cat_action = Smallest;
+        MissingAction missing_action = options.get<MissingAction, Symbol>("missing_action");
+        CategSplit cat_split_type = options.get<CategSplit, Symbol>("categ_split_type");
+        NewCategAction new_cat_action = options.get<NewCategAction, Symbol>("new_categ_action");
         Imputer *imputer = NULL;
-        UseDepthImp depth_imp = Higher;
-        WeighImpRows weigh_imp_rows = Inverse;
+        UseDepthImp depth_imp = options.get<UseDepthImp, Symbol>("depth_imp");
+        WeighImpRows weigh_imp_rows = options.get<WeighImpRows, Symbol>("weigh_imp_rows");
         bool impute_at_fit = false;
 
         // Rice has limit of 14 arguments, so use hash for options
