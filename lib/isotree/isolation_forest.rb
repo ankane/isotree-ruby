@@ -7,7 +7,7 @@ module IsoTree
       min_gain: 0, missing_action: "impute", new_categ_action: "smallest",
       categ_split_type: "subset", all_perm: false, coef_by_prop: false,
       sample_with_replacement: false, penalize_range: true,
-      weigh_by_kurtosis: false, min_imp_obs: 3, depth_imp: "higher",
+      weigh_by_kurtosis: false, coefs: "normal", min_imp_obs: 3, depth_imp: "higher",
       weigh_imp_rows: "inverse", random_seed: 1, nthreads: -1
     )
 
@@ -28,6 +28,7 @@ module IsoTree
       @sample_with_replacement = sample_with_replacement
       @penalize_range = penalize_range
       @weigh_by_kurtosis = weigh_by_kurtosis
+      @coefs = coefs
       @min_imp_obs = min_imp_obs
       @depth_imp = depth_imp
       @weigh_imp_rows = weigh_imp_rows
@@ -148,7 +149,7 @@ module IsoTree
         min_gain missing_action new_categ_action
         categ_split_type all_perm coef_by_prop
         sample_with_replacement penalize_range
-        weigh_by_kurtosis min_imp_obs depth_imp
+        weigh_by_kurtosis coefs min_imp_obs depth_imp
         weigh_imp_rows random_seed nthreads
       )
       options = {}

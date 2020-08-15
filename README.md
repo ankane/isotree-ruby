@@ -66,6 +66,7 @@ IsoTree::IsolationForest.new(
   sample_with_replacement: false,
   penalize_range: true,
   weigh_by_kurtosis: false,
+  coefs: "normal",
   min_imp_obs: 3,
   depth_imp: "higher",
   weigh_imp_rows: "inverse",

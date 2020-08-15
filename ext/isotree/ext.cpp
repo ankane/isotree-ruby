@@ -48,6 +48,15 @@ CategSplit from_ruby<CategSplit>(Object x)
 }
 
 template<>
+CoefType from_ruby<CoefType>(Object x)
+{
+  auto value = x.to_s().str();
+  if (value == "uniform") return Uniform;
+  if (value == "normal") return Normal;
+  throw std::runtime_error("Unknown coef type: " + value);
+}
+
+template<>
 UseDepthImp from_ruby<UseDepthImp>(Object x)
 {
   auto value = x.to_s().str();
@@ -105,7 +114,7 @@ void Init_ext()
         sparse_ix* Xc_indptr = NULL;
 
         // options
-        CoefType coef_type = Normal;
+        CoefType coef_type = options.get<CoefType, Symbol>("coefs");
         double* sample_weights = NULL;
         bool weight_as_sample = false;
         size_t max_depth = 0;
