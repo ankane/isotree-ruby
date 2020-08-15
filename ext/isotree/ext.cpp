@@ -114,25 +114,7 @@ void Init_ext()
         sparse_ix* Xc_indptr = NULL;
 
         // options
-        CoefType coef_type = options.get<CoefType, Symbol>("coefs");
-        double* sample_weights = NULL;
-        bool weight_as_sample = false;
-        size_t max_depth = 0;
-        bool limit_depth = true;
-        bool standardize_dist = false;
-        double* tmat = NULL;
-        double* output_depths = NULL;
-        bool standardize_depth = false;
-        double* col_weights = NULL;
-        MissingAction missing_action = options.get<MissingAction, Symbol>("missing_action");
-        CategSplit cat_split_type = options.get<CategSplit, Symbol>("categ_split_type");
-        NewCategAction new_cat_action = options.get<NewCategAction, Symbol>("new_categ_action");
-        Imputer *imputer = NULL;
-        UseDepthImp depth_imp = options.get<UseDepthImp, Symbol>("depth_imp");
-        WeighImpRows weigh_imp_rows = options.get<WeighImpRows, Symbol>("weigh_imp_rows");
-        bool impute_at_fit = false;
-
-        // Rice has limit of 14 arguments, so use hash for options
+        // Rice has limit of 14 arguments, so use hash
         size_t sample_size = options.get<size_t, Symbol>("sample_size");
         size_t ndim = options.get<size_t, Symbol>("ndim");
         size_t ntrees = options.get<size_t, Symbol>("ntrees");
@@ -142,14 +124,33 @@ void Init_ext()
         double prob_pick_by_gain_pl = options.get<double, Symbol>("prob_pick_pooled_gain");
         double prob_split_by_gain_pl = options.get<double, Symbol>("prob_split_pooled_gain");
         double min_gain = options.get<double, Symbol>("min_gain");
+        MissingAction missing_action = options.get<MissingAction, Symbol>("missing_action");
+        CategSplit cat_split_type = options.get<CategSplit, Symbol>("categ_split_type");
+        NewCategAction new_cat_action = options.get<NewCategAction, Symbol>("new_categ_action");
         bool all_perm = options.get<bool, Symbol>("all_perm");
         bool coef_by_prop = options.get<bool, Symbol>("coef_by_prop");
         bool with_replacement = options.get<bool, Symbol>("sample_with_replacement");
         bool penalize_range = options.get<bool, Symbol>("penalize_range");
         bool weigh_by_kurt = options.get<bool, Symbol>("weigh_by_kurtosis");
+        CoefType coef_type = options.get<CoefType, Symbol>("coefs");
         size_t min_imp_obs = options.get<size_t, Symbol>("min_imp_obs");
+        UseDepthImp depth_imp = options.get<UseDepthImp, Symbol>("depth_imp");
+        WeighImpRows weigh_imp_rows = options.get<WeighImpRows, Symbol>("weigh_imp_rows");
         uint64_t random_seed = options.get<uint64_t, Symbol>("random_seed");
         int nthreads = options.get<int, Symbol>("nthreads");
+
+        // TODO options
+        double* sample_weights = NULL;
+        bool weight_as_sample = false;
+        size_t max_depth = 0;
+        bool limit_depth = true;
+        bool standardize_dist = false;
+        double* tmat = NULL;
+        double* output_depths = NULL;
+        bool standardize_depth = false;
+        double* col_weights = NULL;
+        Imputer *imputer = NULL;
+        bool impute_at_fit = false;
 
         fit_iforest(
           NULL,
