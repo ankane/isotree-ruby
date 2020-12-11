@@ -1,3 +1,7 @@
+## 0.1.5 (unreleased)
+
+- Updated Isotree to 0.1.25
+
 ## 0.1.4 (2020-08-22)
 
 - Added `missing_action`, `new_categ_action`, `categ_split_type`, `coefs`, `depth_imp`, and `weigh_imp_rows` options

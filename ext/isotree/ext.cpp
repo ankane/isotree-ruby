@@ -151,6 +151,7 @@ void Init_ext()
         double* col_weights = NULL;
         Imputer *imputer = NULL;
         bool impute_at_fit = false;
+        bool handle_interrupt = false;
 
         fit_iforest(
           NULL,
@@ -197,6 +198,7 @@ void Init_ext()
           weigh_imp_rows,
           impute_at_fit,
           random_seed,
+          handle_interrupt,
           nthreads
         );
 
