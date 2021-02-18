@@ -1,6 +1,6 @@
 require_relative "test_helper"
 
-class IsoTreeTest < Minitest::Test
+class IsolationForestTest < Minitest::Test
   def test_hashes
     data = test_data
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
