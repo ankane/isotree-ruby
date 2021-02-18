@@ -128,6 +128,15 @@ gem uninstall isotree --force
 bundle install
 ```
 
+## Deployment
+
+Check out [Trove](https://github.com/ankane/trove) for deploying models.
+
+```sh
+trove push model.bin
+trove push model.bin.metadata
+```
+
 ## Reference
 
 Get the average isolation depth
