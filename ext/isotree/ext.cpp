@@ -259,5 +259,17 @@ void Init_ext()
           ret.push(outlier_scores[i]);
         }
         return ret;
+      })
+    .define_singleton_method(
+      "serialize_ext_isoforest",
+      *[](ExtIsoForest& iso, String path) {
+        serialize_ext_isoforest(iso, path.c_str());
+      })
+    .define_singleton_method(
+      "deserialize_ext_isoforest",
+      *[](String path) {
+        ExtIsoForest iso;
+        deserialize_ext_isoforest(iso, path.c_str());
+        return iso;
       });
 }

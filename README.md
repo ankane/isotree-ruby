@@ -43,6 +43,18 @@ model.predict(data)
 
 Scores are between 0 and 1, with higher scores indicating outliers
 
+Export the model [master]
+
+```ruby
+model.export_model("model.bin")
+```
+
+Import a model [master]
+
+```ruby
+model = IsoTree::IsolationForest.import_model("model.bin")
+```
+
 ## Parameters
 
 Pass parameters - default values below

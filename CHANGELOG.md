@@ -1,6 +1,7 @@
 ## 0.1.5 (unreleased)
 
 - Updated Isotree to 0.1.25
+- Added support for exporting and importing models
 
 ## 0.1.4 (2020-08-22)
 

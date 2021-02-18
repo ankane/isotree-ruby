@@ -1,7 +1,6 @@
 require "mkmf-rice"
 
-# TODO add -D_ENABLE_CEREAL
-$CXXFLAGS += " -std=c++11 -D_USE_MERSENNE_TWISTER"
+$CXXFLAGS += " -std=c++11 -D_USE_MERSENNE_TWISTER -D_ENABLE_CEREAL"
 
 apple_clang = RbConfig::CONFIG["CC_VERSION_MESSAGE"] =~ /apple clang/i
 
@@ -13,10 +12,11 @@ end
 
 ext = File.expand_path(".", __dir__)
 isotree = File.expand_path("../../vendor/isotree/src", __dir__)
+cereal = File.expand_path("../../vendor/cereal/include", __dir__)
 
 exclude = %w(Rwrapper.cpp RcppExports.cpp)
 $srcs = Dir["{#{ext},#{isotree}}/*.{cc,cpp}"].reject { |f| exclude.include?(File.basename(f)) }
-$INCFLAGS << " -I#{isotree}"
+$INCFLAGS << " -I#{isotree} -I#{cereal}"
 $VPATH << isotree
 
 create_makefile("isotree/ext")

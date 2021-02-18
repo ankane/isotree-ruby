@@ -3,6 +3,7 @@ require "isotree/ext"
 
 # stdlib
 require "etc"
+require "json"
 
 # modules
 require "isotree/dataset"

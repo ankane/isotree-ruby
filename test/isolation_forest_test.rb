@@ -33,6 +33,34 @@ class IsolationForestTest < Minitest::Test
     assert_equal 100, predictions.each_with_index.max[1]
   end
 
+  def test_export
+    data = test_data
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
+    model.fit(data)
+    original_predictions = model.predict(data)
+
+    tempfile = Tempfile.new
+    model.export_model(tempfile.path)
+    model = IsoTree::IsolationForest.import_model(tempfile.path)
+    predictions = model.predict(data)
+    assert_elements_in_delta original_predictions, predictions
+  end
+
+  def test_import_to_python
+    skip unless ENV["TEST_PYTHON"]
+
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
+    model.fit(test_data)
+    model.export_model("/tmp/model.bin")
+    assert_match "Name: 100", %x[python3 test/support/import.py]
+  end
+
+  def test_import_from_python
+    model = IsoTree::IsolationForest.import_model("test/support/model.bin")
+    predictions = model.predict(test_data.map { |v| v.transform_keys(&:to_s) })
+    assert_equal 100, predictions.each_with_index.max[1]
+  end
+
   def test_numo
     data = Numo::DFloat.cast(numeric_data)
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)

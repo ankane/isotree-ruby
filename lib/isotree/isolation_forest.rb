@@ -66,7 +66,78 @@ module IsoTree
       Ext.predict_iforest(@ext_iso_forest, options)
     end
 
+    # same format as Python so models are compatible
+    def export_model(path)
+      check_fit
+
+      File.write("#{path}.metadata", JSON.pretty_generate(export_metadata))
+      Ext.serialize_ext_isoforest(@ext_iso_forest, path)
+    end
+
+    def self.import_model(path)
+      model = new
+      metadata = JSON.parse(File.read("#{path}.metadata"))
+      model.send(:import_metadata, metadata)
+      model.instance_variable_set(:@ext_iso_forest, Ext.deserialize_ext_isoforest(path))
+      model
+    end
+
     private
+
+    def export_metadata
+      data_info = {
+        ncols_numeric: @numeric_columns.size,
+        ncols_categ: @categorical_columns.size,
+        cols_numeric: @numeric_columns,
+        cols_categ: @categorical_columns,
+        cat_levels: @categorical_columns.map { |v| @categories[v].keys }
+      }
+
+      # Ruby-specific
+      data_info[:sym_numeric] = @numeric_columns.map { |v| v.is_a?(Symbol) }
+      data_info[:sym_categ] = @categorical_columns.map { |v| v.is_a?(Symbol) }
+
+      model_info = {
+        ndim: @ndim,
+        nthreads: @nthreads,
+        build_imputer: false
+      }
+
+      params = {}
+      PARAM_KEYS.each do |k|
+        params[k] = instance_variable_get("@#{k}")
+      end
+
+      {
+        data_info: data_info,
+        model_info: model_info,
+        params: params
+      }
+    end
+
+    def import_metadata(metadata)
+      data_info = metadata["data_info"]
+      model_info = metadata["model_info"]
+      params = metadata["params"]
+
+      # Ruby-specific
+      sym_numeric = data_info["sym_numeric"].to_a
+      sym_categ = data_info["sym_categ"].to_a
+
+      @numeric_columns = data_info["cols_numeric"].map.with_index { |v, i| sym_numeric[i] ? v.to_sym : v }
+      @categorical_columns = data_info["cols_categ"].map.with_index { |v, i| sym_categ[i] ? v.to_sym : v }
+      @categories = {}
+      @categorical_columns.zip(data_info["cat_levels"]) do |col, levels|
+        @categories[col] = levels.map.with_index.to_h
+      end
+
+      @ndim = model_info["ndim"]
+      @nthreads = model_info["nthreads"]
+
+      PARAM_KEYS.each do |k|
+        instance_variable_set("@#{k}", params[k.to_s])
+      end
+    end
 
     def check_fit
       raise "Not fit" unless @ext_iso_forest
@@ -144,6 +215,16 @@ module IsoTree
       options[:nrows] = df.size
       options
     end
+
+    PARAM_KEYS = %i(
+      sample_size ntrees ntry max_depth
+      prob_pick_avg_gain prob_pick_pooled_gain
+      prob_split_avg_gain prob_split_pooled_gain min_gain
+      missing_action new_categ_action categ_split_type coefs depth_imp
+      weigh_imp_rows min_imp_obs random_seed all_perm coef_by_prop
+      weights_as_sample_prob sample_with_replacement penalize_range
+      weigh_by_kurtosis assume_full_distr
+    )
 
     def fit_options
       keys = %i(
