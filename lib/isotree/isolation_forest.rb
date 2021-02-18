@@ -48,7 +48,7 @@ module IsoTree
     end
 
     def predict(x, output: "score")
-      raise "Not fit" unless @ext_iso_forest
+      check_fit
 
       x = Dataset.new(x)
       prep_predict(x)
@@ -67,6 +67,10 @@ module IsoTree
     end
 
     private
+
+    def check_fit
+      raise "Not fit" unless @ext_iso_forest
+    end
 
     def prep_fit(df)
       @numeric_columns = df.numeric_columns
