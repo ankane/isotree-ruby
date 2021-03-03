@@ -34,6 +34,8 @@ class IsolationForestTest < Minitest::Test
   end
 
   def test_export
+    skip "Not supported yet" if windows?
+
     data = test_data
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
     model.fit(data)
@@ -47,7 +49,7 @@ class IsolationForestTest < Minitest::Test
   end
 
   def test_import_to_python
-    skip unless ENV["TEST_PYTHON"]
+    skip if !ENV["TEST_PYTHON"] || windows?
 
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
     model.fit(test_data)
@@ -56,6 +58,8 @@ class IsolationForestTest < Minitest::Test
   end
 
   def test_import_from_python
+    skip "Not supported yet" if windows?
+
     model = IsoTree::IsolationForest.import_model("test/support/model.bin")
     predictions = model.predict(test_data.map { |v| v.transform_keys(&:to_s) })
     assert_equal 100, predictions.each_with_index.max[1]
@@ -163,5 +167,9 @@ class IsolationForestTest < Minitest::Test
 
   def mac?
     RbConfig::CONFIG["host_os"] =~ /darwin/i
+  end
+
+  def windows?
+    Gem.win_platform?
   end
 end

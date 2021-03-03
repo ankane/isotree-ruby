@@ -263,13 +263,25 @@ void Init_ext()
     .define_singleton_method(
       "serialize_ext_isoforest",
       *[](ExtIsoForest& iso, String path) {
+        #ifdef _MSC_VER
+        // TODO convert to wchar_t
+        throw std::runtime_error("Not supported on Windows yet");
+        #else
         serialize_ext_isoforest(iso, path.c_str());
+        #endif
       })
     .define_singleton_method(
       "deserialize_ext_isoforest",
       *[](String path) {
         ExtIsoForest iso;
+
+        #ifdef _MSC_VER
+        // TODO convert to wchar_t
+        throw std::runtime_error("Not supported on Windows yet");
+        #else
         deserialize_ext_isoforest(iso, path.c_str());
+        #endif
+
         return iso;
       });
 }
