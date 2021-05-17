@@ -1,3 +1,8 @@
+## 0.2.0 (unreleased)
+
+- Updated to Rice 4
+- Dropped support for Ruby < 2.6
+
 ## 0.1.5 (2021-03-14)
 
 - Updated Isotree to 0.1.25

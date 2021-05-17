@@ -1,6 +1,6 @@
 require "mkmf-rice"
 
-$CXXFLAGS += " -std=c++11 -D_USE_MERSENNE_TWISTER -D_ENABLE_CEREAL"
+$CXXFLAGS += " -std=c++17 -D_USE_MERSENNE_TWISTER -D_ENABLE_CEREAL"
 
 apple_clang = RbConfig::CONFIG["CC_VERSION_MESSAGE"] =~ /apple clang/i
 
