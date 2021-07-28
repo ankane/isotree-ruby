@@ -10,6 +10,11 @@ if have_library("omp") || have_library("gomp")
   $CXXFLAGS += " -fopenmp"
 end
 
+puts "="*80
+puts "Compiler: #{RbConfig::CONFIG["CC_VERSION_MESSAGE"]}"
+puts "CXXFLAGS: #{$CXXFLAGS}"
+puts "="*80
+
 ext = File.expand_path(".", __dir__)
 isotree = File.expand_path("../../vendor/isotree/src", __dir__)
 cereal = File.expand_path("../../vendor/cereal/include", __dir__)
