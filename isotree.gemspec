@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
   spec.name          = "isotree"
   spec.version       = IsoTree::VERSION
   spec.summary       = "Outlier/anomaly detection for Ruby using Isolation Forest"
-  spec.homepage      = "https://github.com/ankane/isotree"
+  spec.homepage      = "https://github.com/ankane/isotree-ruby"
   spec.license       = "BSD-2-Clause"
 
   spec.author        = "Andrew Kane"

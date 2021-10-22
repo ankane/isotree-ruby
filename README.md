@@ -1,12 +1,12 @@
-# IsoTree
+# IsoTree Ruby
 
 :evergreen_tree: [IsoTree](https://github.com/david-cortes/isotree) - outlier/anomaly detection using Isolation Forest - for Ruby
 
 Learn how [Isolation Forest](https://www.youtube.com/watch?v=RyFQXQf4w4w) works
 
-:deciduous_tree: Check out [OutlierTree](https://github.com/ankane/outliertree) for human-readable explanations of outliers
+:deciduous_tree: Check out [OutlierTree](https://github.com/ankane/outliertree-ruby) for human-readable explanations of outliers
 
-[![Build Status](https://github.com/ankane/isotree/workflows/build/badge.svg?branch=master)](https://github.com/ankane/isotree/actions)
+[![Build Status](https://github.com/ankane/isotree-ruby/workflows/build/badge.svg?branch=master)](https://github.com/ankane/isotree-ruby/actions)
 
 ## Installation
 
@@ -147,22 +147,22 @@ model.predict(data, output: "avg_depth")
 
 ## History
 
-View the [changelog](https://github.com/ankane/isotree/blob/master/CHANGELOG.md)
+View the [changelog](https://github.com/ankane/isotree-ruby/blob/master/CHANGELOG.md)
 
 ## Contributing
 
 Everyone is encouraged to help improve this project. Here are a few ways you can help:
 
-- [Report bugs](https://github.com/ankane/isotree/issues)
-- Fix bugs and [submit pull requests](https://github.com/ankane/isotree/pulls)
+- [Report bugs](https://github.com/ankane/isotree-ruby/issues)
+- Fix bugs and [submit pull requests](https://github.com/ankane/isotree-ruby/pulls)
 - Write, clarify, or fix documentation
 - Suggest or add new features
 
 To get started with development:
 
 ```sh
-git clone --recursive https://github.com/ankane/isotree.git
-cd isotree
+git clone --recursive https://github.com/ankane/isotree-ruby.git
+cd isotree-ruby
 bundle install
 bundle exec rake compile
 bundle exec rake test
