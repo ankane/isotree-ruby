@@ -32,7 +32,6 @@ module IsoTree
           raise ArgumentError, "Array elements must be all hashes or arrays"
         end
 
-        nrows = data.size
         ncols = data.first ? data.first.size : 0
         if data.any? { |r| r.size != ncols }
           raise ArgumentError, "All rows must have the same number of columns"
