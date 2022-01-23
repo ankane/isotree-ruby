@@ -13,7 +13,7 @@ Learn how [Isolation Forest](https://www.youtube.com/watch?v=RyFQXQf4w4w) works
 Add this line to your application’s Gemfile:
 
 ```ruby
-gem 'isotree'
+gem "isotree"
 ```
 
 ## Getting Started
