@@ -160,10 +160,7 @@ class IsolationForestTest < Minitest::Test
   def test_bad_sample_size
     data = test_data
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1, sample_size: data.size * 2)
-    error = assert_raises(ArgumentError) do
-      model.fit(data)
-    end
-    assert_equal "Input is smaller than sample size", error.message
+    model.fit(data)
   end
 
   def test_data

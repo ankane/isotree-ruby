@@ -46,9 +46,7 @@ module IsoTree
       options[:sample_size] ||= options[:nrows]
 
       # prevent segfault
-      if x.size < options[:sample_size]
-        raise ArgumentError, "Input is smaller than sample size"
-      end
+      options[:sample_size] = options[:nrows] if options[:sample_size] > options[:nrows]
 
       @ext_iso_forest = Ext.fit_iforest(options)
     end
