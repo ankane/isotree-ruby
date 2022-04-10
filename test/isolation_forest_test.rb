@@ -157,6 +157,15 @@ class IsolationForestTest < Minitest::Test
     assert_equal "Input must have 2 dimensions", error.message
   end
 
+  def test_bad_sample_size
+    data = test_data
+    model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1, sample_size: data.size * 2)
+    error = assert_raises(ArgumentError) do
+      model.fit(data)
+    end
+    assert_equal "Input is smaller than sample size", error.message
+  end
+
   def test_data
     CSV.table("test/support/data.csv").map(&:to_h)
   end
