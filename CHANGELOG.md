@@ -1,4 +1,4 @@
-## 0.2.2 (unreleased)
+## 0.2.2 (2022-06-12)
 
 - Fixed segfault when data is smaller than sample size
 
