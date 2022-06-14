@@ -1,38 +1,59 @@
 module IsoTree
   class IsolationForest
     def initialize(
-      sample_size: nil, ntrees: 500, ndim: 3, ntry: 3,
-      prob_pick_avg_gain: 0, prob_pick_pooled_gain: 0,
-      prob_split_avg_gain: 0, prob_split_pooled_gain: 0,
-      min_gain: 0, missing_action: "impute", new_categ_action: "smallest",
-      categ_split_type: "subset", all_perm: false, coef_by_prop: false,
-      sample_with_replacement: false, penalize_range: true,
-      weigh_by_kurtosis: false, coefs: "normal", min_imp_obs: 3, depth_imp: "higher",
-      weigh_imp_rows: "inverse", random_seed: 1, nthreads: -1
+      sample_size: "auto", ntrees: 500, ndim: 3, ntry: 1,
+      # categ_cols: nil,
+      max_depth: "auto", ncols_per_tree: nil,
+      prob_pick_pooled_gain: 0.0, prob_pick_avg_gain: 0.0,
+      prob_pick_full_gain: 0.0, prob_pick_dens: 0.0,
+      prob_pick_col_by_range: 0.0, prob_pick_col_by_var: 0.0, prob_pick_col_by_kurt: 0.0,
+      min_gain: 0.0, missing_action: "auto", new_categ_action: "auto",
+      categ_split_type: "auto", all_perm: false, coef_by_prop: false,
+      # recode_categ: false,
+      weights_as_sample_prob: true,
+      sample_with_replacement: false, penalize_range: false, standardize_data: true,
+      scoring_metric: "depth", fast_bratio: true,
+      weigh_by_kurtosis: false, coefs: "uniform", assume_full_distr: true,
+      # build_imputer: false,
+      min_imp_obs: 3, depth_imp: "higher",
+      weigh_imp_rows: "inverse", random_seed: 1, use_long_double: false, nthreads: -1
     )
 
       @sample_size = sample_size
       @ntrees = ntrees
       @ndim = ndim
       @ntry = ntry
-      @prob_pick_avg_gain = prob_pick_avg_gain
+      # @categ_cols = categ_cols
+      @max_depth = max_depth
+      @ncols_per_tree = ncols_per_tree
       @prob_pick_pooled_gain = prob_pick_pooled_gain
-      @prob_split_avg_gain = prob_split_avg_gain
-      @prob_split_pooled_gain = prob_split_pooled_gain
+      @prob_pick_avg_gain = prob_pick_avg_gain
+      @prob_pick_full_gain = prob_pick_full_gain
+      @prob_pick_dens = prob_pick_dens
+      @prob_pick_col_by_range = prob_pick_col_by_range
+      @prob_pick_col_by_var = prob_pick_col_by_var
+      @prob_pick_col_by_kurt = prob_pick_col_by_kurt
       @min_gain = min_gain
       @missing_action = missing_action
       @new_categ_action = new_categ_action
       @categ_split_type = categ_split_type
       @all_perm = all_perm
       @coef_by_prop = coef_by_prop
+      # @recode_categ = recode_categ
+      @weights_as_sample_prob = weights_as_sample_prob
       @sample_with_replacement = sample_with_replacement
       @penalize_range = penalize_range
+      @standardize_data = standardize_data
+      @scoring_metric = scoring_metric
+      @fast_bratio = fast_bratio
       @weigh_by_kurtosis = weigh_by_kurtosis
       @coefs = coefs
+      @assume_full_distr = assume_full_distr
       @min_imp_obs = min_imp_obs
       @depth_imp = depth_imp
       @weigh_imp_rows = weigh_imp_rows
       @random_seed = random_seed
+      @use_long_double = use_long_double
 
       # etc module returns virtual cores
       nthreads = Etc.nprocessors if nthreads < 0
@@ -40,10 +61,16 @@ module IsoTree
     end
 
     def fit(x)
+      # make export consistent with Python library
+      update_params
+
       x = Dataset.new(x)
       prep_fit(x)
       options = data_options(x).merge(fit_options)
-      options[:sample_size] ||= options[:nrows]
+
+      if options[:sample_size] == "auto"
+        options[:sample_size] = [options[:nrows], 10000].min
+      end
 
       # prevent segfault
       options[:sample_size] = options[:nrows] if options[:sample_size] > options[:nrows]
@@ -71,18 +98,22 @@ module IsoTree
     end
 
     # same format as Python so models are compatible
-    def export_model(path)
+    def export_model(path, add_metada_file: false)
       check_fit
 
-      File.write("#{path}.metadata", JSON.pretty_generate(export_metadata))
-      Ext.serialize_ext_isoforest(@ext_iso_forest, path)
+      metadata = export_metadata
+      if add_metada_file
+        # indent 4 spaces like Python
+        File.write("#{path}.metadata", JSON.pretty_generate(metadata, indent: "    "))
+      end
+      Ext.serialize_combined(@ext_iso_forest, path, JSON.generate(metadata))
     end
 
     def self.import_model(path)
       model = new
-      metadata = JSON.parse(File.read("#{path}.metadata"))
-      model.send(:import_metadata, metadata)
-      model.instance_variable_set(:@ext_iso_forest, Ext.deserialize_ext_isoforest(path))
+      ext_iso_forest, metadata = Ext.deserialize_combined(path)
+      model.instance_variable_set(:@ext_iso_forest, ext_iso_forest)
+      model.send(:import_metadata, JSON.parse(metadata))
       model
     end
 
@@ -94,7 +125,9 @@ module IsoTree
         ncols_categ: @categorical_columns.size,
         cols_numeric: @numeric_columns,
         cols_categ: @categorical_columns,
-        cat_levels: @categorical_columns.map { |v| @categories[v].keys }
+        cat_levels: @categorical_columns.map { |v| @categories[v].keys },
+        categ_cols: [],
+        categ_max: []
       }
 
       # Ruby-specific
@@ -104,12 +137,17 @@ module IsoTree
       model_info = {
         ndim: @ndim,
         nthreads: @nthreads,
+        use_long_double: @use_long_double,
         build_imputer: false
       }
 
       params = {}
       PARAM_KEYS.each do |k|
         params[k] = instance_variable_get("@#{k}")
+      end
+
+      if params[:max_depth] == "auto"
+        params[:max_depth] = 0
       end
 
       {
@@ -137,6 +175,8 @@ module IsoTree
 
       @ndim = model_info["ndim"]
       @nthreads = model_info["nthreads"]
+      @use_long_double = model_info["use_long_double"]
+      @build_imputer = model_info["build_imputer"]
 
       PARAM_KEYS.each do |k|
         instance_variable_set("@#{k}", params[k.to_s])
@@ -221,31 +261,71 @@ module IsoTree
     end
 
     PARAM_KEYS = %i(
-      sample_size ntrees ntry max_depth
-      prob_pick_avg_gain prob_pick_pooled_gain
-      prob_split_avg_gain prob_split_pooled_gain min_gain
-      missing_action new_categ_action categ_split_type coefs depth_imp
-      weigh_imp_rows min_imp_obs random_seed all_perm coef_by_prop
-      weights_as_sample_prob sample_with_replacement penalize_range
-      weigh_by_kurtosis assume_full_distr
+      sample_size ntrees ntry max_depth ncols_per_tree
+      prob_pick_avg_gain prob_pick_pooled_gain prob_pick_full_gain prob_pick_dens
+      prob_pick_col_by_range prob_pick_col_by_var prob_pick_col_by_kurt
+      min_gain missing_action new_categ_action categ_split_type coefs
+      depth_imp weigh_imp_rows min_imp_obs random_seed all_perm
+      coef_by_prop weights_as_sample_prob sample_with_replacement penalize_range standardize_data
+      scoring_metric fast_bratio weigh_by_kurtosis assume_full_distr
     )
 
     def fit_options
       keys = %i(
         sample_size ntrees ndim ntry
-        prob_pick_avg_gain prob_pick_pooled_gain
-        prob_split_avg_gain prob_split_pooled_gain
+        categ_cols max_depth ncols_per_tree
+        prob_pick_pooled_gain prob_pick_avg_gain
+        prob_pick_full_gain prob_pick_dens
+        prob_pick_col_by_range prob_pick_col_by_var prob_pick_col_by_kurt
         min_gain missing_action new_categ_action
         categ_split_type all_perm coef_by_prop
-        sample_with_replacement penalize_range
+        weights_as_sample_prob
+        sample_with_replacement penalize_range standardize_data
+        scoring_metric fast_bratio
         weigh_by_kurtosis coefs min_imp_obs depth_imp
-        weigh_imp_rows random_seed nthreads
+        weigh_imp_rows random_seed use_long_double nthreads
       )
       options = {}
       keys.each do |k|
         options[k] = instance_variable_get("@#{k}")
       end
+
+      if options[:max_depth] == "auto"
+        options[:max_depth] = 0
+        options[:limit_depth] = true
+      end
+
+      if options[:ncols_per_tree].nil?
+        options[:ncols_per_tree] = 0
+      end
+
       options
+    end
+
+    def update_params
+      if @missing_action == "auto"
+        if @ndim == 1
+          @missing_action = "divide"
+        else
+          @missing_action = "impute"
+        end
+      end
+
+      if @new_categ_action == "auto"
+        if @ndim == 1
+          @new_categ_action = "weighted"
+        else
+          @new_categ_action = "impute"
+        end
+      end
+
+      if @categ_split_type == "auto"
+        if @ndim == 1
+          @categ_split_type = "single_categ"
+        else
+          @categ_split_type = "subset"
+        end
+      end
     end
   end
 end

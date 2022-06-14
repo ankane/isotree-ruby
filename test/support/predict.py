@@ -13,4 +13,4 @@ print('Point with highest outlier score: ', df.iloc[np.argsort(-predictions)[0]]
 print('avg_depth')
 print(model.predict(df, output='avg_depth')[0:3].tolist())
 
-model.export_model("test/support/model.bin")
+model.export_model('test/support/model.bin', add_metada_file=True)

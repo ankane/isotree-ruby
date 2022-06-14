@@ -16,6 +16,8 @@ Add this line to your application’s Gemfile:
 gem "isotree"
 ```
 
+Windows is not supported at the moment
+
 ## Getting Started
 
 Prep your data
@@ -24,7 +26,8 @@ Prep your data
 data = [
   {department: "Books",  sale: false, price: 2.50},
   {department: "Books",  sale: true,  price: 3.00},
-  {department: "Movies", sale: false, price: 5.00}
+  {department: "Movies", sale: false, price: 5.00},
+  # ...
 ]
 ```
 
@@ -61,28 +64,38 @@ Pass parameters - default values below
 
 ```ruby
 IsoTree::IsolationForest.new(
-  sample_size: nil,
+  sample_size: "auto",
   ntrees: 500,
   ndim: 3,
-  ntry: 3,
-  prob_pick_avg_gain: 0,
-  prob_pick_pooled_gain: 0,
-  prob_split_avg_gain: 0,
-  prob_split_pooled_gain: 0,
-  min_gain: 0,
-  missing_action: "impute",
-  new_categ_action: "smallest",
-  categ_split_type: "subset",
+  ntry: 1,
+  max_depth: "auto",
+  ncols_per_tree: nil,
+  prob_pick_pooled_gain: 0.0,
+  prob_pick_avg_gain: 0.0,
+  prob_pick_full_gain: 0.0,
+  prob_pick_dens: 0.0,
+  prob_pick_col_by_range: 0.0,
+  prob_pick_col_by_var: 0.0,
+  prob_pick_col_by_kurt: 0.0,
+  min_gain: 0.0,
+  missing_action: "auto",
+  new_categ_action: "auto",
+  categ_split_type: "auto",
   all_perm: false,
   coef_by_prop: false,
   sample_with_replacement: false,
-  penalize_range: true,
+  penalize_range: false,
+  standardize_data: true,
+  scoring_metric: "depth",
+  fast_bratio: true,
   weigh_by_kurtosis: false,
-  coefs: "normal",
+  coefs: "uniform",
+  assume_full_distr: true,
   min_imp_obs: 3,
   depth_imp: "higher",
   weigh_imp_rows: "inverse",
   random_seed: 1,
+  use_long_double: false,
   nthreads: -1
 )
 ```
@@ -134,7 +147,6 @@ Check out [Trove](https://github.com/ankane/trove) for deploying models.
 
 ```sh
 trove push model.bin
-trove push model.bin.metadata
 ```
 
 ## Reference
@@ -144,6 +156,12 @@ Get the average isolation depth
 ```ruby
 model.predict(data, output: "avg_depth")
 ```
+
+## Upgrading
+
+### 0.3.0
+
+This version uses IsoTree’s new serialization format. Exported models must be recreated.
 
 ## History
 

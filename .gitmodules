@@ -1,6 +1,3 @@
 [submodule "vendor/isotree"]
 	path = vendor/isotree
 	url = https://github.com/david-cortes/isotree
-[submodule "vendor/cereal"]
-	path = vendor/cereal
-	url = https://github.com/USCiLab/cereal.git

@@ -1,3 +1,10 @@
+## 0.3.0 (unreleased)
+
+- Updated IsoTree to 0.5.16
+- Updated serialization format (exported models must be recreated)
+- Dropped support for Ruby < 2.7
+- Dropped support for Windows
+
 ## 0.2.2 (2022-06-12)
 
 - Fixed segfault when data is smaller than sample size
@@ -13,7 +20,7 @@
 
 ## 0.1.5 (2021-03-14)
 
-- Updated Isotree to 0.1.25
+- Updated IsoTree to 0.1.25
 - Added support for exporting and importing models
 
 ## 0.1.4 (2020-08-22)

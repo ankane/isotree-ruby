@@ -6,13 +6,7 @@ class IsolationForestTest < Minitest::Test
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
     model.fit(data)
     predictions = model.predict(data)
-    # different results on different platforms with same seed
-    expected =
-      if mac?
-        [0.4617110810516882, 0.5210998270463041, 0.5661097222304904]
-      else
-        [0.4927188206980871, 0.4801482894096561, 0.5887046016628537]
-      end
+    expected = [0.4816470280716818, 0.46655713161582574, 0.5363011880474468]
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.max[1]
   end
@@ -22,13 +16,7 @@ class IsolationForestTest < Minitest::Test
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
     model.fit(data)
     predictions = model.predict(data)
-    # different results on different platforms with same seed
-    expected =
-      if mac?
-        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
-      else
-        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
-      end
+    expected = [0.454691875234909, 0.42805783155356797, 0.5460616479701705]
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.max[1]
   end
@@ -53,8 +41,13 @@ class IsolationForestTest < Minitest::Test
 
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
     model.fit(test_data)
-    model.export_model("/tmp/model.bin")
+    model.export_model("/tmp/model.bin", add_metada_file: true)
     assert_match "Name: 100", %x[python3 test/support/import.py]
+
+    expected = JSON.parse(File.read("test/support/model.bin.metadata"))
+    metadata = JSON.parse(File.read("/tmp/model.bin.metadata"))
+    metadata["data_info"].reject! { |k, _| ["sym_numeric", "sym_categ"].include?(k) }
+    assert_equal expected, metadata
   end
 
   def test_import_from_python
@@ -65,18 +58,19 @@ class IsolationForestTest < Minitest::Test
     assert_equal 100, predictions.each_with_index.max[1]
   end
 
+  def test_import_missing_file
+    error = assert_raises do
+      IsoTree::IsolationForest.import_model("missing.bin")
+    end
+    assert_equal "Cannot open file", error.message
+  end
+
   def test_numo
     data = Numo::DFloat.cast(numeric_data)
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
     model.fit(data)
     predictions = model.predict(data)
-    # different results on different platforms with same seed
-    expected =
-      if mac?
-        [0.510724008530721, 0.4338067195010562, 0.5569583231648105]
-      else
-        [0.4980166082320242, 0.43188267587261414, 0.5831027020603062]
-      end
+    expected = [0.454691875234909, 0.42805783155356797, 0.5460616479701705]
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.max[1]
   end
@@ -88,13 +82,7 @@ class IsolationForestTest < Minitest::Test
     model = IsoTree::IsolationForest.new(ntrees: 10, ndim: 3, nthreads: 1)
     model.fit(data)
     predictions = model.predict(data)
-    # different results on different platforms with same seed
-    expected =
-      if mac?
-        [0.4617110810516882, 0.5210998270463041, 0.5661097222304904]
-      else
-        [0.4927188206980871, 0.4801482894096561, 0.5887046016628537]
-      end
+    expected = [0.4816470280716818, 0.46655713161582574, 0.5363011880474468]
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.max[1]
   end
@@ -105,12 +93,7 @@ class IsolationForestTest < Minitest::Test
     model.fit(data)
     predictions = model.predict(data, output: "avg_depth")
     # different results on different platforms with same seed
-    expected =
-      if mac?
-        [9.359408405715701, 7.893975468975469, 6.890641859762501]
-      else
-        [8.572215345713797, 8.885202562920695, 6.416666666666666]
-      end
+    expected = [8.847458736905825, 9.23295785483866, 7.545738407619213]
     assert_elements_in_delta expected, predictions.first(3)
     assert_equal 100, predictions.each_with_index.min[1]
   end
@@ -169,10 +152,6 @@ class IsolationForestTest < Minitest::Test
 
   def numeric_data
     test_data.map { |v| [v[:num1], v[:num2]] }
-  end
-
-  def mac?
-    RbConfig::CONFIG["host_os"] =~ /darwin/i
   end
 
   def windows?

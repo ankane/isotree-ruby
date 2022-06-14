@@ -1,3 +1,8 @@
+// stdlib
+#include <cmath>
+#include <fstream>
+#include <iostream>
+
 // isotree
 #include <isotree.hpp>
 
@@ -22,7 +27,7 @@ namespace Rice::detail
     NewCategAction convert(VALUE x)
     {
       auto value = Object(x).to_s().str();
-      if (value == "weighted") return Weighted;
+      if (value == "weighted" || value == "impute") return Weighted;
       if (value == "smallest") return Smallest;
       if (value == "random") return Random;
       throw std::runtime_error("Unknown new categ action: " + value);
@@ -96,6 +101,24 @@ namespace Rice::detail
       throw std::runtime_error("Unknown weight imp rows: " + value);
     }
   };
+
+  template<>
+  class From_Ruby<ScoringMetric>
+  {
+  public:
+    ScoringMetric convert(VALUE x)
+    {
+      auto value = Object(x).to_s().str();
+      if (value == "depth") return Depth;
+      if (value == "adj_depth") return AdjDepth;
+      if (value == "density") return Density;
+      if (value == "adj_density") return AdjDensity;
+      if (value == "boxed_density") return BoxedDensity;
+      if (value == "boxed_density2") return BoxedDensity2;
+      if (value == "boxed_ratio") return BoxedRatio;
+      throw std::runtime_error("Unknown scoring metric: " + value);
+    }
+  };
 }
 
 extern "C"
@@ -118,20 +141,20 @@ void Init_ext()
         size_t ncols_numeric = options.get<size_t, Symbol>("ncols_numeric");
         size_t ncols_categ = options.get<size_t, Symbol>("ncols_categ");
 
-        double *restrict numeric_data = NULL;
+        real_t* numeric_data = NULL;
         if (ncols_numeric > 0) {
           numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
         }
 
-        int *restrict categorical_data = NULL;
-        int *restrict ncat = NULL;
+        int* categorical_data = NULL;
+        int* ncat = NULL;
         if (ncols_categ > 0) {
           categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
           ncat = (int*) options.get<String, Symbol>("ncat").c_str();
         }
 
         // not used (sparse matrices)
-        double* Xc = NULL;
+        real_t* Xc = NULL;
         sparse_ix* Xc_ind = NULL;
         sparse_ix* Xc_indptr = NULL;
 
@@ -142,9 +165,7 @@ void Init_ext()
         size_t ntrees = options.get<size_t, Symbol>("ntrees");
         size_t ntry = options.get<size_t, Symbol>("ntry");
         double prob_pick_by_gain_avg = options.get<double, Symbol>("prob_pick_avg_gain");
-        double prob_split_by_gain_avg = options.get<double, Symbol>("prob_split_avg_gain");
         double prob_pick_by_gain_pl = options.get<double, Symbol>("prob_pick_pooled_gain");
-        double prob_split_by_gain_pl = options.get<double, Symbol>("prob_split_pooled_gain");
         double min_gain = options.get<double, Symbol>("min_gain");
         MissingAction missing_action = options.get<MissingAction, Symbol>("missing_action");
         CategSplit cat_split_type = options.get<CategSplit, Symbol>("categ_split_type");
@@ -159,21 +180,31 @@ void Init_ext()
         UseDepthImp depth_imp = options.get<UseDepthImp, Symbol>("depth_imp");
         WeighImpRows weigh_imp_rows = options.get<WeighImpRows, Symbol>("weigh_imp_rows");
         uint64_t random_seed = options.get<uint64_t, Symbol>("random_seed");
+        bool use_long_double = options.get<bool, Symbol>("use_long_double");
         int nthreads = options.get<int, Symbol>("nthreads");
 
         // TODO options
         double* sample_weights = NULL;
-        bool weight_as_sample = false;
-        size_t max_depth = 0;
-        bool limit_depth = true;
+        bool weight_as_sample = options.get<bool, Symbol>("weights_as_sample_prob");
+        size_t max_depth = options.get<size_t, Symbol>("max_depth");
+        bool limit_depth = options.get<bool, Symbol>("limit_depth");
         bool standardize_dist = false;
         double* tmat = NULL;
         double* output_depths = NULL;
         bool standardize_depth = false;
-        double* col_weights = NULL;
-        Imputer *imputer = NULL;
+        real_t* col_weights = NULL;
+        Imputer* imputer = NULL;
         bool impute_at_fit = false;
-        bool handle_interrupt = false;
+
+        int ncols_per_tree = options.get<int, Symbol>("ncols_per_tree");
+        bool standardize_data = options.get<bool, Symbol>("standardize_data");
+        ScoringMetric scoring_metric = options.get<ScoringMetric, Symbol>("scoring_metric");
+        bool fast_bratio = options.get<bool, Symbol>("fast_bratio");
+        double prob_pick_by_full_gain = options.get<double, Symbol>("prob_pick_full_gain");
+        double prob_pick_by_dens = options.get<double, Symbol>("prob_pick_dens");
+        double prob_pick_col_by_range = options.get<double, Symbol>("prob_pick_col_by_range");
+        double prob_pick_col_by_var = options.get<double, Symbol>("prob_pick_col_by_var");
+        double prob_pick_col_by_kurt = options.get<double, Symbol>("prob_pick_col_by_kurt");
 
         fit_iforest(
           NULL,
@@ -197,18 +228,25 @@ void Init_ext()
           sample_size,
           ntrees,
           max_depth,
+          ncols_per_tree,
           limit_depth,
           penalize_range,
+          standardize_data,
+          scoring_metric,
+          fast_bratio,
           standardize_dist,
           tmat,
           output_depths,
           standardize_depth,
           col_weights,
           weigh_by_kurt,
-          prob_pick_by_gain_avg,
-          prob_split_by_gain_avg,
           prob_pick_by_gain_pl,
-          prob_split_by_gain_pl,
+          prob_pick_by_gain_avg,
+          prob_pick_by_full_gain,
+          prob_pick_by_dens,
+          prob_pick_col_by_range,
+          prob_pick_col_by_var,
+          prob_pick_col_by_kurt,
           min_gain,
           missing_action,
           cat_split_type,
@@ -220,7 +258,7 @@ void Init_ext()
           weigh_imp_rows,
           impute_at_fit,
           random_seed,
-          handle_interrupt,
+          use_long_double,
           nthreads
         );
 
@@ -234,21 +272,21 @@ void Init_ext()
         size_t ncols_numeric = options.get<size_t, Symbol>("ncols_numeric");
         size_t ncols_categ = options.get<size_t, Symbol>("ncols_categ");
 
-        double *restrict numeric_data = NULL;
+        real_t* numeric_data = NULL;
         if (ncols_numeric > 0) {
           numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
         }
 
-        int *restrict categorical_data = NULL;
+        int* categorical_data = NULL;
         if (ncols_categ > 0) {
           categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
         }
 
         // not used (sparse matrices)
-        double* Xc = NULL;
+        real_t* Xc = NULL;
         sparse_ix* Xc_ind = NULL;
         sparse_ix* Xc_indptr = NULL;
-        double* Xr = NULL;
+        real_t* Xr = NULL;
         sparse_ix* Xr_ind = NULL;
         sparse_ix* Xr_indptr = NULL;
 
@@ -257,10 +295,17 @@ void Init_ext()
         bool standardize = options.get<bool, Symbol>("standardize");
         std::vector<double> outlier_scores(nrows);
         sparse_ix* tree_num = NULL;
+        bool is_col_major = true;
+        size_t ld_numeric = 0;
+        size_t ld_categ = 0;
+        double* per_tree_depths = NULL;
 
         predict_iforest(
           numeric_data,
           categorical_data,
+          is_col_major,
+          ld_numeric,
+          ld_categ,
           Xc,
           Xc_ind,
           Xc_indptr,
@@ -273,7 +318,9 @@ void Init_ext()
           NULL,
           &iso,
           outlier_scores.data(),
-          tree_num
+          tree_num,
+          per_tree_depths,
+          NULL
         );
 
         Array ret;
@@ -283,27 +330,93 @@ void Init_ext()
         return ret;
       })
     .define_singleton_function(
-      "serialize_ext_isoforest",
-      [](ExtIsoForest& iso, String path) {
+      "serialize_combined",
+      [](ExtIsoForest& iso, String path, String metadata) {
         #ifdef _MSC_VER
         // TODO convert to wchar_t
         throw std::runtime_error("Not supported on Windows yet");
         #else
-        serialize_ext_isoforest(iso, path.c_str());
+        std::ofstream file;
+        file.open(path.c_str());
+        serialize_combined(
+          NULL,
+          &iso,
+          NULL,
+          NULL,
+          metadata.c_str(),
+          // returns bytesize (RSTRING_LEN)
+          metadata.length(),
+          file
+        );
+        file.close();
         #endif
       })
     .define_singleton_function(
-      "deserialize_ext_isoforest",
+      "deserialize_combined",
       [](String path) {
-        ExtIsoForest iso;
-
         #ifdef _MSC_VER
         // TODO convert to wchar_t
         throw std::runtime_error("Not supported on Windows yet");
         #else
-        deserialize_ext_isoforest(iso, path.c_str());
-        #endif
+        Array ret;
 
-        return iso;
+        std::ifstream file;
+        file.open(path.c_str(), std::ios_base::in | std::ios_base::binary);
+        if (!file) {
+          throw std::runtime_error("Cannot open file");
+        }
+
+        bool is_isotree_model = false;
+        bool is_compatible = false;
+        bool has_combined_objects = false;
+        bool has_IsoForest = false;
+        bool has_ExtIsoForest = false;
+        bool has_Imputer = false;
+        bool has_Indexer = false;
+        bool has_metadata = false;
+        size_t size_metadata = 0;
+
+        inspect_serialized_object(
+          file,
+          is_isotree_model,
+          is_compatible,
+          has_combined_objects,
+          has_IsoForest,
+          has_ExtIsoForest,
+          has_Imputer,
+          has_Indexer,
+          has_metadata,
+          size_metadata
+        );
+
+        if (!is_isotree_model || !has_combined_objects) {
+          throw std::runtime_error("Input file is not a serialized isotree model");
+        }
+        if (!is_compatible) {
+          throw std::runtime_error("Model file format is incompatible");
+        }
+        if (size_metadata == 0) {
+          throw std::runtime_error("Input file does not contain metadata");
+        }
+
+        IsoForest model = IsoForest();
+        ExtIsoForest model_ext = ExtIsoForest();
+        Imputer imputer = Imputer();
+        TreesIndexer indexer = TreesIndexer();
+        char *optional_metadata = (char*) calloc(size_metadata, sizeof(char));
+        if (optional_metadata == NULL) {
+          throw std::runtime_error("Cannot allocate memory");
+        }
+
+        deserialize_combined(file, &model, &model_ext, &imputer, &indexer, optional_metadata);
+        file.close();
+
+        ret.push(Object(Rice::detail::To_Ruby<ExtIsoForest>().convert(model_ext)));
+        ret.push(String(optional_metadata));
+
+        free(optional_metadata);
+
+        return ret;
+        #endif
       });
 }
