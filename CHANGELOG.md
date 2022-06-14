@@ -1,4 +1,4 @@
-## 0.3.0 (unreleased)
+## 0.3.0 (2022-06-13)
 
 - Updated IsoTree to 0.5.16
 - Updated serialization format (exported models must be recreated)
