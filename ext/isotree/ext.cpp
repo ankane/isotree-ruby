@@ -412,7 +412,7 @@ void Init_ext()
         file.close();
 
         ret.push(Object(Rice::detail::To_Ruby<ExtIsoForest>().convert(model_ext)));
-        ret.push(String(optional_metadata));
+        ret.push(String(std::string(optional_metadata, size_metadata)));
 
         free(optional_metadata);
 
