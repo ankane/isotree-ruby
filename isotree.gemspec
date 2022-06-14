@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.author        = "Andrew Kane"
   spec.email         = "andrew@ankane.org"
 
-  spec.files         = Dir["*.{md,txt}", "{ext,lib}/**/*", "vendor/isotree/{LICENSE,README.md}", "vendor/isotree/inst/COPYRIGHTS", "vendor/isotree/src/**/*"]
+  spec.files         = Dir["*.{md,txt}", "{ext,lib}/**/*", "vendor/isotree/{LICENSE,README.md}", "vendor/isotree/inst/COPYRIGHTS", "vendor/isotree/{include,src}/*.{cpp,hpp}", "vendor/isotree/src/robinmap/{LICENSE,README.md}", "vendor/isotree/src/robinmap/include/**/*"]
   spec.require_path  = "lib"
   spec.extensions    = ["ext/isotree/extconf.rb"]
 
