@@ -6,6 +6,6 @@ require "etc"
 require "json"
 
 # modules
-require "isotree/dataset"
-require "isotree/isolation_forest"
-require "isotree/version"
+require_relative "isotree/dataset"
+require_relative "isotree/isolation_forest"
+require_relative "isotree/version"
