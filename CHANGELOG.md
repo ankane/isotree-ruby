@@ -1,3 +1,7 @@
+## 0.3.2 (unreleased)
+
+- Updated IsoTree to 0.6.1
+
 ## 0.3.1 (2023-12-19)
 
 - Updated IsoTree to 0.5.25
