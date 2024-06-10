@@ -6,7 +6,7 @@ Learn how [Isolation Forest](https://www.youtube.com/watch?v=RyFQXQf4w4w) works
 
 :deciduous_tree: Check out [OutlierTree](https://github.com/ankane/outliertree-ruby) for human-readable explanations of outliers
 
-[![Build Status](https://github.com/ankane/isotree-ruby/workflows/build/badge.svg?branch=master)](https://github.com/ankane/isotree-ruby/actions)
+[![Build Status](https://github.com/ankane/isotree-ruby/actions/workflows/build.yml/badge.svg)](https://github.com/ankane/isotree-ruby/actions)
 
 ## Installation
 
