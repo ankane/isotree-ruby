@@ -1,4 +1,4 @@
-## 0.4.0 (unreleased)
+## 0.4.0 (2024-06-11)
 
 - Updated IsoTree to 0.6.1
 - Dropped support for Ruby < 3.1
