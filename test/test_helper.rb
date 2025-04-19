@@ -3,7 +3,6 @@ Bundler.require(:default)
 require "minitest/autorun"
 require "minitest/pride"
 require "csv"
-require "numo/narray"
 
 class Minitest::Test
   def assert_elements_in_delta(expected, actual)
