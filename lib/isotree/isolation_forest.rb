@@ -1,24 +1,44 @@
 module IsoTree
   class IsolationForest
     def initialize(
-      sample_size: "auto", ntrees: 500, ndim: 3, ntry: 1,
+      sample_size: "auto",
+      ntrees: 500,
+      ndim: 3,
+      ntry: 1,
       # categ_cols: nil,
-      max_depth: "auto", ncols_per_tree: nil,
-      prob_pick_pooled_gain: 0.0, prob_pick_avg_gain: 0.0,
-      prob_pick_full_gain: 0.0, prob_pick_dens: 0.0,
-      prob_pick_col_by_range: 0.0, prob_pick_col_by_var: 0.0, prob_pick_col_by_kurt: 0.0,
-      min_gain: 0.0, missing_action: "auto", new_categ_action: "auto",
-      categ_split_type: "auto", all_perm: false, coef_by_prop: false,
+      max_depth: "auto",
+      ncols_per_tree: nil,
+      prob_pick_pooled_gain: 0.0,
+      prob_pick_avg_gain: 0.0,
+      prob_pick_full_gain: 0.0,
+      prob_pick_dens: 0.0,
+      prob_pick_col_by_range: 0.0,
+      prob_pick_col_by_var: 0.0,
+      prob_pick_col_by_kurt: 0.0,
+      min_gain: 0.0,
+      missing_action: "auto",
+      new_categ_action: "auto",
+      categ_split_type: "auto",
+      all_perm: false,
+      coef_by_prop: false,
       # recode_categ: false,
       weights_as_sample_prob: true,
-      sample_with_replacement: false, penalize_range: false, standardize_data: true,
-      scoring_metric: "depth", fast_bratio: true,
-      weigh_by_kurtosis: false, coefs: "uniform", assume_full_distr: true,
+      sample_with_replacement: false,
+      penalize_range: false,
+      standardize_data: true,
+      scoring_metric: "depth",
+      fast_bratio: true,
+      weigh_by_kurtosis: false,
+      coefs: "uniform",
+      assume_full_distr: true,
       # build_imputer: false,
-      min_imp_obs: 3, depth_imp: "higher",
-      weigh_imp_rows: "inverse", random_seed: 1, use_long_double: false, nthreads: -1
+      min_imp_obs: 3,
+      depth_imp: "higher",
+      weigh_imp_rows: "inverse",
+      random_seed: 1,
+      use_long_double: false,
+      nthreads: -1
     )
-
       @sample_size = sample_size
       @ntrees = ntrees
       @ndim = ndim
