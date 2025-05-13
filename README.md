@@ -157,12 +157,6 @@ Get the average isolation depth
 model.predict(data, output: "avg_depth")
 ```
 
-## Upgrading
-
-### 0.3.0
-
-This version uses IsoTree’s new serialization format. Exported models must be recreated.
-
 ## History
 
 View the [changelog](https://github.com/ankane/isotree-ruby/blob/master/CHANGELOG.md)
