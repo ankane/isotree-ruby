@@ -2,6 +2,8 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
+#include <string>
+#include <vector>
 
 // isotree
 #include <isotree.hpp>
@@ -11,21 +13,15 @@
 
 using Rice::Array;
 using Rice::Hash;
-using Rice::Module;
 using Rice::Object;
 using Rice::String;
 using Rice::Symbol;
-using Rice::define_class_under;
-using Rice::define_module;
 
-namespace Rice::detail
-{
+namespace Rice::detail {
   template<>
-  class From_Ruby<NewCategAction>
-  {
+  class From_Ruby<NewCategAction> {
   public:
-    NewCategAction convert(VALUE x)
-    {
+    NewCategAction convert(VALUE x) {
       auto value = Object(x).to_s().str();
       if (value == "weighted" || value == "impute") return Weighted;
       if (value == "smallest") return Smallest;
@@ -35,11 +31,9 @@ namespace Rice::detail
   };
 
   template<>
-  class From_Ruby<MissingAction>
-  {
+  class From_Ruby<MissingAction> {
   public:
-    MissingAction convert(VALUE x)
-    {
+    MissingAction convert(VALUE x) {
       auto value = Object(x).to_s().str();
       if (value == "divide") return Divide;
       if (value == "impute") return Impute;
@@ -49,11 +43,9 @@ namespace Rice::detail
   };
 
   template<>
-  class From_Ruby<CategSplit>
-  {
+  class From_Ruby<CategSplit> {
   public:
-    CategSplit convert(VALUE x)
-    {
+    CategSplit convert(VALUE x) {
       auto value = Object(x).to_s().str();
       if (value == "subset") return SubSet;
       if (value == "single_categ") return SingleCateg;
@@ -62,11 +54,9 @@ namespace Rice::detail
   };
 
   template<>
-  class From_Ruby<CoefType>
-  {
+  class From_Ruby<CoefType> {
   public:
-    CoefType convert(VALUE x)
-    {
+    CoefType convert(VALUE x) {
       auto value = Object(x).to_s().str();
       if (value == "uniform") return Uniform;
       if (value == "normal") return Normal;
@@ -75,11 +65,9 @@ namespace Rice::detail
   };
 
   template<>
-  class From_Ruby<UseDepthImp>
-  {
+  class From_Ruby<UseDepthImp> {
   public:
-    UseDepthImp convert(VALUE x)
-    {
+    UseDepthImp convert(VALUE x) {
       auto value = Object(x).to_s().str();
       if (value == "lower") return Lower;
       if (value == "higher") return Higher;
@@ -89,11 +77,9 @@ namespace Rice::detail
   };
 
   template<>
-  class From_Ruby<WeighImpRows>
-  {
+  class From_Ruby<WeighImpRows> {
   public:
-    WeighImpRows convert(VALUE x)
-    {
+    WeighImpRows convert(VALUE x) {
       auto value = Object(x).to_s().str();
       if (value == "inverse") return Inverse;
       if (value == "prop") return Prop;
@@ -103,11 +89,9 @@ namespace Rice::detail
   };
 
   template<>
-  class From_Ruby<ScoringMetric>
-  {
+  class From_Ruby<ScoringMetric> {
   public:
-    ScoringMetric convert(VALUE x)
-    {
+    ScoringMetric convert(VALUE x) {
       auto value = Object(x).to_s().str();
       if (value == "depth") return Depth;
       if (value == "adj_depth") return AdjDepth;
@@ -119,15 +103,14 @@ namespace Rice::detail
       throw std::runtime_error("Unknown scoring metric: " + value);
     }
   };
-}
+} // namespace Rice::detail
 
 extern "C"
-void Init_ext()
-{
-  Module rb_mIsoTree = define_module("IsoTree");
+void Init_ext() {
+  Rice::Module rb_mIsoTree = Rice::define_module("IsoTree");
 
-  Module rb_mExt = define_module_under(rb_mIsoTree, "Ext");
-  define_class_under<ExtIsoForest>(rb_mExt, "ExtIsoForest");
+  Rice::Module rb_mExt = Rice::define_module_under(rb_mIsoTree, "Ext");
+  Rice::define_class_under<ExtIsoForest>(rb_mExt, "ExtIsoForest");
 
   rb_mExt
     .define_singleton_function(
