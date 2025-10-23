@@ -1,3 +1,7 @@
+## 0.4.1 (unreleased)
+
+- Fixed error with Rice 4.7
+
 ## 0.4.0 (2024-06-11)
 
 - Updated IsoTree to 0.6.1

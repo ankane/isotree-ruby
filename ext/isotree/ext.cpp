@@ -308,7 +308,7 @@ void Init_ext() {
 
         Array ret;
         for (size_t i = 0; i < outlier_scores.size(); i++) {
-          ret.push(outlier_scores[i]);
+          ret.push(outlier_scores[i], false);
         }
         return ret;
       })
@@ -394,8 +394,8 @@ void Init_ext() {
         deserialize_combined(file, &model, &model_ext, &imputer, &indexer, optional_metadata);
         file.close();
 
-        ret.push(Object(Rice::detail::To_Ruby<ExtIsoForest>().convert(model_ext)));
-        ret.push(String(std::string(optional_metadata, size_metadata)));
+        ret.push(Object(Rice::detail::To_Ruby<ExtIsoForest>().convert(model_ext)), false);
+        ret.push(String(std::string(optional_metadata, size_metadata)), false);
 
         free(optional_metadata);
 
