@@ -111,7 +111,7 @@ class IsolationForestTest < Minitest::Test
     model = IsoTree::IsolationForest.new
     model.fit(x)
     error = assert_raises(ArgumentError) do
-      model.predict(x.reshape(2, 101))
+      model.predict(Numo::DFloat.new(2, 101).rand_norm)
     end
     assert_equal "Input must have 2 columns for this model", error.message
   end

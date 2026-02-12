@@ -8,3 +8,4 @@ gem "minitest"
 gem "numo-narray"
 gem "rover-df"
 gem "csv"
+gem "ruby_memcheck", require: false
