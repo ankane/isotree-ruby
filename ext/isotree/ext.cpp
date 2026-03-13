@@ -120,77 +120,77 @@ void Init_ext() {
         ExtIsoForest iso;
 
         // data
-        size_t nrows = options.get<size_t, Symbol>("nrows");
-        size_t ncols_numeric = options.get<size_t, Symbol>("ncols_numeric");
-        size_t ncols_categ = options.get<size_t, Symbol>("ncols_categ");
+        auto nrows = options.get<size_t, Symbol>("nrows");
+        auto ncols_numeric = options.get<size_t, Symbol>("ncols_numeric");
+        auto ncols_categ = options.get<size_t, Symbol>("ncols_categ");
 
-        real_t* numeric_data = NULL;
+        real_t* numeric_data = nullptr;
         if (ncols_numeric > 0) {
           numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
         }
 
-        int* categorical_data = NULL;
-        int* ncat = NULL;
+        int* categorical_data = nullptr;
+        int* ncat = nullptr;
         if (ncols_categ > 0) {
           categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
           ncat = (int*) options.get<String, Symbol>("ncat").c_str();
         }
 
         // not used (sparse matrices)
-        real_t* Xc = NULL;
-        sparse_ix* Xc_ind = NULL;
-        sparse_ix* Xc_indptr = NULL;
+        real_t* Xc = nullptr;
+        sparse_ix* Xc_ind = nullptr;
+        sparse_ix* Xc_indptr = nullptr;
 
         // options
         // Rice has limit of 14 arguments, so use hash
-        size_t sample_size = options.get<size_t, Symbol>("sample_size");
-        size_t ndim = options.get<size_t, Symbol>("ndim");
-        size_t ntrees = options.get<size_t, Symbol>("ntrees");
-        size_t ntry = options.get<size_t, Symbol>("ntry");
-        double prob_pick_by_gain_avg = options.get<double, Symbol>("prob_pick_avg_gain");
-        double prob_pick_by_gain_pl = options.get<double, Symbol>("prob_pick_pooled_gain");
-        double min_gain = options.get<double, Symbol>("min_gain");
-        MissingAction missing_action = options.get<MissingAction, Symbol>("missing_action");
-        CategSplit cat_split_type = options.get<CategSplit, Symbol>("categ_split_type");
-        NewCategAction new_cat_action = options.get<NewCategAction, Symbol>("new_categ_action");
-        bool all_perm = options.get<bool, Symbol>("all_perm");
-        bool coef_by_prop = options.get<bool, Symbol>("coef_by_prop");
-        bool with_replacement = options.get<bool, Symbol>("sample_with_replacement");
-        bool penalize_range = options.get<bool, Symbol>("penalize_range");
-        bool weigh_by_kurt = options.get<bool, Symbol>("weigh_by_kurtosis");
-        CoefType coef_type = options.get<CoefType, Symbol>("coefs");
-        size_t min_imp_obs = options.get<size_t, Symbol>("min_imp_obs");
-        UseDepthImp depth_imp = options.get<UseDepthImp, Symbol>("depth_imp");
-        WeighImpRows weigh_imp_rows = options.get<WeighImpRows, Symbol>("weigh_imp_rows");
-        uint64_t random_seed = options.get<uint64_t, Symbol>("random_seed");
-        bool use_long_double = options.get<bool, Symbol>("use_long_double");
-        int nthreads = options.get<int, Symbol>("nthreads");
+        auto sample_size = options.get<size_t, Symbol>("sample_size");
+        auto ndim = options.get<size_t, Symbol>("ndim");
+        auto ntrees = options.get<size_t, Symbol>("ntrees");
+        auto ntry = options.get<size_t, Symbol>("ntry");
+        auto prob_pick_by_gain_avg = options.get<double, Symbol>("prob_pick_avg_gain");
+        auto prob_pick_by_gain_pl = options.get<double, Symbol>("prob_pick_pooled_gain");
+        auto min_gain = options.get<double, Symbol>("min_gain");
+        auto missing_action = options.get<MissingAction, Symbol>("missing_action");
+        auto cat_split_type = options.get<CategSplit, Symbol>("categ_split_type");
+        auto new_cat_action = options.get<NewCategAction, Symbol>("new_categ_action");
+        auto all_perm = options.get<bool, Symbol>("all_perm");
+        auto coef_by_prop = options.get<bool, Symbol>("coef_by_prop");
+        auto with_replacement = options.get<bool, Symbol>("sample_with_replacement");
+        auto penalize_range = options.get<bool, Symbol>("penalize_range");
+        auto weigh_by_kurt = options.get<bool, Symbol>("weigh_by_kurtosis");
+        auto coef_type = options.get<CoefType, Symbol>("coefs");
+        auto min_imp_obs = options.get<size_t, Symbol>("min_imp_obs");
+        auto depth_imp = options.get<UseDepthImp, Symbol>("depth_imp");
+        auto weigh_imp_rows = options.get<WeighImpRows, Symbol>("weigh_imp_rows");
+        auto random_seed = options.get<uint64_t, Symbol>("random_seed");
+        auto use_long_double = options.get<bool, Symbol>("use_long_double");
+        auto nthreads = options.get<int, Symbol>("nthreads");
 
         // TODO options
-        double* sample_weights = NULL;
-        bool weight_as_sample = options.get<bool, Symbol>("weights_as_sample_prob");
-        size_t max_depth = options.get<size_t, Symbol>("max_depth");
-        bool limit_depth = options.get<bool, Symbol>("limit_depth");
+        double* sample_weights = nullptr;
+        auto weight_as_sample = options.get<bool, Symbol>("weights_as_sample_prob");
+        auto max_depth = options.get<size_t, Symbol>("max_depth");
+        auto limit_depth = options.get<bool, Symbol>("limit_depth");
         bool standardize_dist = false;
-        double* tmat = NULL;
-        double* output_depths = NULL;
+        double* tmat = nullptr;
+        double* output_depths = nullptr;
         bool standardize_depth = false;
-        real_t* col_weights = NULL;
-        Imputer* imputer = NULL;
+        real_t* col_weights = nullptr;
+        Imputer* imputer = nullptr;
         bool impute_at_fit = false;
 
-        int ncols_per_tree = options.get<int, Symbol>("ncols_per_tree");
-        bool standardize_data = options.get<bool, Symbol>("standardize_data");
-        ScoringMetric scoring_metric = options.get<ScoringMetric, Symbol>("scoring_metric");
-        bool fast_bratio = options.get<bool, Symbol>("fast_bratio");
-        double prob_pick_by_full_gain = options.get<double, Symbol>("prob_pick_full_gain");
-        double prob_pick_by_dens = options.get<double, Symbol>("prob_pick_dens");
-        double prob_pick_col_by_range = options.get<double, Symbol>("prob_pick_col_by_range");
-        double prob_pick_col_by_var = options.get<double, Symbol>("prob_pick_col_by_var");
-        double prob_pick_col_by_kurt = options.get<double, Symbol>("prob_pick_col_by_kurt");
+        auto ncols_per_tree = options.get<int, Symbol>("ncols_per_tree");
+        auto standardize_data = options.get<bool, Symbol>("standardize_data");
+        auto scoring_metric = options.get<ScoringMetric, Symbol>("scoring_metric");
+        auto fast_bratio = options.get<bool, Symbol>("fast_bratio");
+        auto prob_pick_by_full_gain = options.get<double, Symbol>("prob_pick_full_gain");
+        auto prob_pick_by_dens = options.get<double, Symbol>("prob_pick_dens");
+        auto prob_pick_col_by_range = options.get<double, Symbol>("prob_pick_col_by_range");
+        auto prob_pick_col_by_var = options.get<double, Symbol>("prob_pick_col_by_var");
+        auto prob_pick_col_by_kurt = options.get<double, Symbol>("prob_pick_col_by_kurt");
 
         fit_iforest(
-          NULL,
+          nullptr,
           &iso,
           numeric_data,
           ncols_numeric,
@@ -251,37 +251,37 @@ void Init_ext() {
       "predict_iforest",
       [](ExtIsoForest& iso, Hash options) {
         // data
-        size_t nrows = options.get<size_t, Symbol>("nrows");
-        size_t ncols_numeric = options.get<size_t, Symbol>("ncols_numeric");
-        size_t ncols_categ = options.get<size_t, Symbol>("ncols_categ");
+        auto nrows = options.get<size_t, Symbol>("nrows");
+        auto ncols_numeric = options.get<size_t, Symbol>("ncols_numeric");
+        auto ncols_categ = options.get<size_t, Symbol>("ncols_categ");
 
-        real_t* numeric_data = NULL;
+        real_t* numeric_data = nullptr;
         if (ncols_numeric > 0) {
           numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
         }
 
-        int* categorical_data = NULL;
+        int* categorical_data = nullptr;
         if (ncols_categ > 0) {
           categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
         }
 
         // not used (sparse matrices)
-        real_t* Xc = NULL;
-        sparse_ix* Xc_ind = NULL;
-        sparse_ix* Xc_indptr = NULL;
-        real_t* Xr = NULL;
-        sparse_ix* Xr_ind = NULL;
-        sparse_ix* Xr_indptr = NULL;
+        real_t* Xc = nullptr;
+        sparse_ix* Xc_ind = nullptr;
+        sparse_ix* Xc_indptr = nullptr;
+        real_t* Xr = nullptr;
+        sparse_ix* Xr_ind = nullptr;
+        sparse_ix* Xr_indptr = nullptr;
 
         // options
-        int nthreads = options.get<int, Symbol>("nthreads");
-        bool standardize = options.get<bool, Symbol>("standardize");
+        auto nthreads = options.get<int, Symbol>("nthreads");
+        auto standardize = options.get<bool, Symbol>("standardize");
         std::vector<double> outlier_scores(nrows);
-        sparse_ix* tree_num = NULL;
+        sparse_ix* tree_num = nullptr;
         bool is_col_major = true;
         size_t ld_numeric = 0;
         size_t ld_categ = 0;
-        double* per_tree_depths = NULL;
+        double* per_tree_depths = nullptr;
 
         predict_iforest(
           numeric_data,
@@ -298,49 +298,49 @@ void Init_ext() {
           nrows,
           nthreads,
           standardize,
-          NULL,
+          nullptr,
           &iso,
           outlier_scores.data(),
           tree_num,
           per_tree_depths,
-          NULL
+          nullptr
         );
 
         Array ret;
-        for (size_t i = 0; i < outlier_scores.size(); i++) {
-          ret.push(outlier_scores[i], false);
+        for (auto v : outlier_scores) {
+          ret.push(v, false);
         }
         return ret;
       })
     .define_singleton_function(
       "serialize_combined",
       [](ExtIsoForest& iso, String path, String metadata) {
-        #ifdef _MSC_VER
+#ifdef _MSC_VER
         // TODO convert to wchar_t
         throw std::runtime_error("Not supported on Windows yet");
-        #else
+#else
         std::ofstream file;
         file.open(path.c_str());
         serialize_combined(
-          NULL,
+          nullptr,
           &iso,
-          NULL,
-          NULL,
+          nullptr,
+          nullptr,
           metadata.c_str(),
           // returns bytesize (RSTRING_LEN)
           metadata.length(),
           file
         );
         file.close();
-        #endif
+#endif
       })
     .define_singleton_function(
       "deserialize_combined",
       [](String path) {
-        #ifdef _MSC_VER
+#ifdef _MSC_VER
         // TODO convert to wchar_t
         throw std::runtime_error("Not supported on Windows yet");
-        #else
+#else
         Array ret;
 
         std::ifstream file;
@@ -386,8 +386,8 @@ void Init_ext() {
         ExtIsoForest model_ext = ExtIsoForest();
         Imputer imputer = Imputer();
         TreesIndexer indexer = TreesIndexer();
-        char *optional_metadata = (char*) calloc(size_metadata, sizeof(char));
-        if (optional_metadata == NULL) {
+        char* optional_metadata = static_cast<char*>(calloc(size_metadata, sizeof(char)));
+        if (optional_metadata == nullptr) {
           throw std::runtime_error("Cannot allocate memory");
         }
 
@@ -400,6 +400,6 @@ void Init_ext() {
         free(optional_metadata);
 
         return ret;
-        #endif
+#endif
       });
 }
