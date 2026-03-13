@@ -126,14 +126,14 @@ void Init_ext() {
 
         real_t* numeric_data = nullptr;
         if (ncols_numeric > 0) {
-          numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
+          numeric_data = reinterpret_cast<real_t*>(const_cast<char*>(options.get<String, Symbol>("numeric_data").c_str()));
         }
 
         int* categorical_data = nullptr;
         int* ncat = nullptr;
         if (ncols_categ > 0) {
-          categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
-          ncat = (int*) options.get<String, Symbol>("ncat").c_str();
+          categorical_data = reinterpret_cast<int*>(const_cast<char*>(options.get<String, Symbol>("categorical_data").c_str()));
+          ncat = reinterpret_cast<int*>(const_cast<char*>(options.get<String, Symbol>("ncat").c_str()));
         }
 
         // not used (sparse matrices)
@@ -257,12 +257,12 @@ void Init_ext() {
 
         real_t* numeric_data = nullptr;
         if (ncols_numeric > 0) {
-          numeric_data = (double*) options.get<String, Symbol>("numeric_data").c_str();
+          numeric_data = reinterpret_cast<real_t*>(const_cast<char*>(options.get<String, Symbol>("numeric_data").c_str()));
         }
 
         int* categorical_data = nullptr;
         if (ncols_categ > 0) {
-          categorical_data = (int*) options.get<String, Symbol>("categorical_data").c_str();
+          categorical_data = reinterpret_cast<int*>(const_cast<char*>(options.get<String, Symbol>("categorical_data").c_str()));
         }
 
         // not used (sparse matrices)
