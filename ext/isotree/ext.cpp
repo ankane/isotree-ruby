@@ -6,6 +6,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <string_view>
 #include <vector>
 
 // isotree
@@ -389,18 +390,13 @@ void Init_ext() {
         ExtIsoForest model_ext = ExtIsoForest();
         Imputer imputer = Imputer();
         TreesIndexer indexer = TreesIndexer();
-        char* optional_metadata = static_cast<char*>(calloc(size_metadata, sizeof(char)));
-        if (optional_metadata == nullptr) {
-          throw std::runtime_error("Cannot allocate memory");
-        }
+        std::vector<char> optional_metadata(size_metadata, 0);
 
-        deserialize_combined(file, &model, &model_ext, &imputer, &indexer, optional_metadata);
+        deserialize_combined(file, &model, &model_ext, &imputer, &indexer, optional_metadata.data());
         file.close();
 
         ret.push(Object(Rice::detail::To_Ruby<ExtIsoForest>().convert(model_ext)), false);
-        ret.push(String(std::string(optional_metadata, size_metadata)), false);
-
-        free(optional_metadata);
+        ret.push(String(std::string_view{optional_metadata.data(), optional_metadata.size()}), false);
 
         return ret;
 #endif
