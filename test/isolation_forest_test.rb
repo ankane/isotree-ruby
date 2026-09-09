@@ -44,8 +44,8 @@ class IsolationForestTest < Minitest::Test
     model.export_model("/tmp/model.bin", add_metada_file: true)
     assert_match "Name: 100", %x[python3 test/support/import.py]
 
-    expected = JSON.parse(File.read("test/support/model.bin.metadata"))
-    metadata = JSON.parse(File.read("/tmp/model.bin.metadata"))
+    expected = JSON.load_file("test/support/model.bin.metadata")
+    metadata = JSON.load_file("/tmp/model.bin.metadata")
     metadata["data_info"].reject! { |k, _| ["sym_numeric", "sym_categ"].include?(k) }
     assert_equal expected, metadata
   end
